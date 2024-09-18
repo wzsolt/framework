@@ -1,0 +1,15 @@
+{% import "formBuilderMacros.twig" as self %}
+<div class="btn-group{% if element.isDisabled %} disabled{% endif %}" id="{{ element.getId }}"{{ self.attributes(element.getAttributes) }}>
+    <button data-color="{{ element.getOptions[value].color }}" class="btn-{{ element.getOptions[value].color }} {% if element.getClass %} {{ element.getClass }}{% endif %} dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {% if element.getOptions[value].icon %}<i class="{{ element.getOptions[value].icon }}"></i>{% endif %}
+        {{ _(element.getCaption) }}
+    </button>
+    <div class="dropdown-menu radius-1 brc-primary-m4 p-1 m-2">
+        {% for key, option in element.getOptions %}
+            <a class="dropdown-item btn btn-sm btn-outline-{{ option.color }} btn-h-light-{{ option.color }} btn-a-{{ option.color }} my-1 radius-1 {{ option.class }}" data-value="{% if option.value %}{{ option.value }}{% else %}{{ key }}{% endif %}" data-color="{{ option.color }}" data-icon="{{ option.icon }}" href="javascript:;">
+                {% if option.icon %}<i class="{{ option.icon }} me-2"></i>{% endif %}
+                {{ _(option.label) }}
+            </a>
+        {% endfor %}
+    </div>
+</div>

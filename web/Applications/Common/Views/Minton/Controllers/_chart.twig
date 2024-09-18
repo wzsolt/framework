@@ -1,0 +1,2 @@
+{% import "formBuilderMacros.twig" as self %}
+<canvas id="{{ element.getId }}" class="{{ element.getClass }}"{{ self.attributes(element.getAttributes) }} data-type="{{ element.getChartType }}" data-dataset='{{ element.generateData }}' data-options='{{ element.generateOptions }}'></canvas>

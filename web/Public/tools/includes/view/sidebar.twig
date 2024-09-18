@@ -1,0 +1,35 @@
+<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
+    <a href="./" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <i class="fa-solid fa-screwdriver-wrench fs-4 me-2"></i>
+        <span class="fs-4">Tools</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+        {% for pg, menu in constant('MENU') %}
+        <li class="nav-item">
+            <a href="./?page={{ pg }}" class="nav-link text-white{% if page == pg %} active{% endif %}">
+                <i class="fa-light {{ menu.icon }} me-1"></i>
+                {{ menu.name }}
+            </a>
+        </li>
+        {% endfor %}
+        <li>
+            <a href="./?getinfo=1" target="_blank" class="nav-link text-white">
+                <i class="fa-brands fa-php me-1"></i>
+                PHP info
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="../images/mr.svg" alt="" class="rounded-circle me-2" width="32" height="32">
+            <strong>
+                {{ superuser.firstName }}
+            </strong>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+            <li><a class="dropdown-item" href="./?logout=1">Sign out</a></li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,196 @@
+{% macro form(form, context) %}
+    <form action="{{ form.getAction }}" method="post" id="{{ form.getName }}-form" autocomplete="off" class="parsley-form{% if form.submitOnEnter %} frm-submit-enter{% endif %}"{% if form.isUpload %} enctype="multipart/form-data"{% endif %} data-modal="false">
+        {% include "formBuilder.twig" %}
+    </form>
+{% endmacro %}
+
+{% macro view(form) %}
+    {% import _self as self %}
+
+    {% if form.getTitle %}
+        <div class="border-0 mb-3">
+            {% if form.getTitle %}
+                <div class="float-start">
+                    <h1 class="page-title text-secondary-d3 text-140 d-block">
+                        {{ _(form.getTitle) }}
+                    </h1>
+                    {% if form.getSubTitle %}
+                        <h6 class="text-grey-l2 font-light">{{ form.getSubTitle }}</h6>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="clearfix"></div>
+    {% endif %}
+
+    {% include form.viewTemplate ~ '.twig' %}
+
+    {% if form.getButtons|length > 0 %}
+        <div class="d-flex">
+            <div class="justify-content-end ms-auto">
+                {% for button in form.getButtons %}
+                    {% if button.showInViewer and not button.isHidden %}
+                        {{ formBuilder.button(button) }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro renderElements(controls, values, formName, errors) %}
+    {% import _self as self %}
+    {% for elementId, element in controls %}
+        {% if element.isContainer %}
+            {% set x = element.addClass('mb-1') %}
+
+            {{ include(template_from_string( element.openTag )) }}
+            {% if element.getElements %}
+                {{ self.renderElements(element.getElements, values, formName, errors) }}
+            {% endif %}
+            {% if element.getType == 'include' %}
+                {{ self.includeTemplate(element.getInclude, element.getData, values) }}
+            {% elseif element.getType == 'templateString' %}
+                {{ include(template_from_string( element.getTemplateString )) }}
+            {% elseif element.getType == 'sub-form' %}
+                {% set form = element.getForm %}
+                {% include 'subFormBuilder.twig' %}
+            {% elseif element.getType == 'table' %}
+                {% set table = element.getTable %}
+                {% if table.getType == 'table' %}
+                    {% include 'table.twig' %}
+                {% elseif table.getType == 'div' %}
+                    {% include 'table-div.twig' %}
+                {% endif %}
+            {% endif %}
+            {{ include(template_from_string( element.closeTag )) }}
+        {% elseif element.getType == 'template' %}
+            {{ self.renderTemplate(element, values) }}
+        {% else %}
+            {% set x = element.setGroupClass('mb-2') %}
+
+            {{ self.renderElement(element, valueHelper(values, elementId, element.getName), formName, errors) }}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro renderElement(element, value, formName, errors) %}
+    {% include '_' ~ element.getTemplate ~ '.twig' %}
+{% endmacro %}
+
+{% macro renderTemplate(element, values) %}
+    {{ extractArray(values) }}
+    {% include '_' ~ element.getTemplate ~ '.twig' %}
+{% endmacro %}
+
+{% macro attributes(attr) %}{% if attr %} {% apply spaceless %}{% for key, value in attr %} {{ key }}="{% if value|first == '_' %}{{ _(value|trim('_', 'left')) }}{% else %}{{ value }}{% endif %}"{% endfor %}{% endapply %}{% endif %}{% endmacro %}
+
+{% macro includeTemplate(template, data, values) %}
+    {{ extractArray(data) }}
+    {% include template ~ '.twig' %}
+{% endmacro %}
+
+{% macro button(button) %}
+    {% if not button.isHidden %}
+        {% include '_' ~ button.getTemplate ~ '.twig' %}
+    {% endif %}
+{% endmacro %}
+
+{% macro label(element, addLabelTag = true) %}
+    {% import _self as self %}
+    {% if element.getLabel %}
+    {% if addLabelTag %}<label for="{{ element.getId }}" class="form-label">{% endif %}
+            {{ _(element.getLabel) }}{% if element.isRequired %} <span class="text-danger">*</span>{% endif %}
+            {% if element.getHelpText.icon %}
+                <i class="text-primary{% if element.getHelpText.icon is same as (true) %} fa fa-info-circle{% else %} {{ element.getHelpText.icon }}{% endif %}" data-bs-toggle="tooltip" title="{{ _(element.getHelpText.text) }}"></i>
+            {% endif %}
+    {% if addLabelTag %}</label>{% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro icon(element) %}
+    {% import _self as self %}
+    {% if element.getIcon %}
+        {% if element.getIconType == 'feather' %}
+            <i data-feather="{{ element.getIcon }}{% if element.getIconColor %} text-{{ element.getIconColor }}{% endif %}"></i>
+        {% else %}
+            <i class="{{ element.getIcon }}{% if element.getIconColor %} text-{{ element.getIconColor }}{% endif %}"></i>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro text(element) %}
+    {% import _self as self %}
+    {% include '_text.twig' %}
+{% endmacro %}
+
+{% macro textarea(element) %}
+    {% import _self as self %}
+    {% include '_textarea.twig' %}
+{% endmacro %}
+
+{% macro select(element) %}
+    {% import _self as self %}
+    {% include '_select.twig' %}
+{% endmacro %}
+
+{% macro checkbox(element) %}
+    {% import _self as self %}
+    {% include '_checkbox.twig' %}
+{% endmacro %}
+
+{% macro checkGroup(element) %}
+    {% import _self as self %}
+    {% include '_checkgroup.twig' %}
+{% endmacro %}
+
+{% macro radio(element) %}
+    {% import _self as self %}
+    {% include '_radio.twig' %}
+{% endmacro %}
+
+{% macro switch(element) %}
+    {% import _self as self %}
+    {% include '_switch.twig' %}
+{% endmacro %}
+
+{% macro toggle(element) %}
+    {% import _self as self %}
+    {% include '_toggle.twig' %}
+{% endmacro %}
+
+{% macro editor(element) %}
+    {% import _self as self %}
+    {% include '_editor.twig' %}
+{% endmacro %}
+
+{% macro progressBar(element) %}
+    {% import _self as self %}
+    {% include '_progressBar.twig' %}
+{% endmacro %}
+
+{% macro colorPicker(element) %}
+    {% import _self as self %}
+    {% include '_colorPicker.twig' %}
+{% endmacro %}
+
+{% macro infoText(text) %}
+    <small class="text-secondary">{{ _(text)|raw }}</small>
+{% endmacro %}
+
+{#
+{% macro tags(element) %}
+    {% import _self as self %}
+    {% include '_tags.twig' %}
+{% endmacro %}
+
+{% macro file(element) %}
+    {% import _self as self %}
+    {% include '_file.twig' %}
+{% endmacro %}
+
+{% macro slider(element) %}
+    {% import _self as self %}
+    {% include '_slider.twig' %}
+{% endmacro %}
+ #}

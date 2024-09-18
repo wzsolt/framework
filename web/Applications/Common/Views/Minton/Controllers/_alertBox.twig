@@ -1,0 +1,11 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="form-group{{ element.getGroupClasses }}">
+    <div id="{{ element.getId }}" class="alert alert-{{ element.getColor }} {{ element.getClass }}"{{ self.attributes(element.getAttributes) }}>
+        {% if element.getIcon %}
+            {{ self.icon(element) }}
+        {% endif %}
+        {% for text in element.getContent %}
+            {{ _(text)|raw }}<br>
+        {% endfor %}
+    </div>
+</div>

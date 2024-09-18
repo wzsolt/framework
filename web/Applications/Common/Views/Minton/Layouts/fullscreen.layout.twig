@@ -1,0 +1,18 @@
+<body data-layout='{"sidebar": {"color":"{% if settings.darkSideBar %}dark{% else %}light{% endif %}","size":"condensed"}}'>
+<div id="wrapper">
+    {% include 'navbar.twig' %}
+    {% include 'sidebar.twig' %}
+    <div class="content-page">
+        <div class="content">
+            <div class="container-fluid h-100 pt-3">
+                {% if page.getSubTitle %}
+                    <h4 class="mb-3 text-primary">{{ _(page.getSubTitle)|raw }}</h4>
+                {% endif %}
+
+                {% include pageTemplate ~ '.twig' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'rightbar.twig' %}
+{% include 'page-modals.twig' %}

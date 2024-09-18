@@ -1,0 +1,78 @@
+{% import 'table-helper.twig' as Helper %}
+
+{% if table.getIncludeBefore %}
+    {% include table.getIncludeBefore ~ '.twig' %}
+{% endif %}
+
+{% if table.hasButtons and (table.getButtonPosition b-and 1) == 1 %}
+    <div class="text-end mb-3">
+        {% include "table-buttons.twig" %}
+    </div>
+{% endif %}
+
+{% if (table.getPagerPosition b-and 1) == 1 %}
+    <div class="d-flex ps-1 pt-35 flex-column flex-sm-row pt-1">
+        {% include "table-pager.twig" %}
+    </div>
+{% endif %}
+
+<div class="table-responsive">
+    <table id="table-{{ table.getName }}" class="{{ table.getTableClass }}" data-table="{{ table.getName }}"{% if table.getClassName != table.getName %} data-alias="{{ table.getClassName }}"{% endif %}{% if table.parameters.options %} data-options="{{ table.parameters.options|json_encode() }}"{% endif %}{% if table.getForeignKeyValues is not empty %} data-fkeys="{{ table.getForeignKeyValues|join(',') }}"{% endif %}>
+        {% if not table.isHeaderHidden %}
+            <thead class="{{ table.getTableHeaderClass }}">
+            <tr>
+                {% set colspan = 0 %}
+                {% if table.isMultipleSelect %}
+                    {% set colspan = colspan + 1 %}
+                    <th class="d-done d-sm-table-cell">
+                        <div class="form-group form-check form-check-warning">
+                            <input id="select-all-row" type="checkbox" value="all" class="form-check-input table-row-selector-all" data-parsley-ui-enabled="false">
+                            <label for="select-all-row" class="form-check-label"></label>
+                        </div>
+                    </th>
+                {% endif %}
+
+                {% for col in table.getColumns %}
+                    {% if col.getType != 'hidden' and col.getCaption is not empty %}
+                        {% set colspan = colspan + 1 %}
+                        {% apply spaceless %}
+                        <th{% if col.getColspan is not empty %} colspan="{{ col.getColspan }}"{% endif %} class="{% if col.getWidth %}col-{{ col.getWidth }}{% endif %}{% if col.getHeaderClass is not empty %} {{ col.getHeaderClass }}{% endif %}"{% if col.getHeaderStyle is not empty %} style="{{ col.getHeaderStyle }}"{% endif %}>
+                            {% if col.getIcon is not empty %}<i class="{{ col.getIcon }} fa-fw"></i> {% endif %}
+                            {{ _(col.caption) }}
+                        </th>
+                        {% endapply %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if table.isRowOptions %}
+                    {% set colspan = colspan + 1 %}
+                    <th class="col-{{ table.getOptionsWidth }} text-end"><span class="d-none d-sm-block">{{ _('LBL_OPTIONS') }}</span></th>
+                {% endif %}
+            </tr>
+            </thead>
+        {% endif %}
+
+        {% include table.getBodyTemplate ~ '.twig' %}
+        {% include 'table-totals.twig' %}
+
+        {% if table.getIncludeAfter %}
+            {% include table.getIncludeAfter ~ '.twig' %}
+        {% endif %}
+    </table>
+</div>
+
+<div class="d-flex ps-1 pt-35 flex-column flex-sm-row pt-1">
+    {% if not table.isCounterHidden %}
+        {% include "table-row-counter.twig" %}
+    {% endif %}
+
+    {% if (table.getPagerPosition b-and 2) == 2 %}
+        {% include "table-pager.twig" %}
+    {% endif %}
+</div>
+
+{% if table.hasButtons and (table.getButtonPosition b-and 2) == 2 %}
+    <div class="text-end mt-2">
+        {% include "table-buttons.twig" %}
+    </div>
+{% endif %}

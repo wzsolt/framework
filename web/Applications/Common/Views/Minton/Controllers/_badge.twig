@@ -1,0 +1,4 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="form-group{{ element.getGroupClasses }}{% if element.hasError %} has-error{% endif %}">
+    <h{{ element.getSize }}><span class="badge bg-{{ element.color(value) }}">{{ _(element.label(value)) }}</span></h{{ element.getSize }}>
+</div>

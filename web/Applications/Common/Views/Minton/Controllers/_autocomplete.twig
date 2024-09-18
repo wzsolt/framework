@@ -1,0 +1,33 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="form-group{{ element.getGroupClasses }}{% if element.hasError %} has-error{% endif %}">
+    {{ self.label(element) }}
+    <div class="dropdown">
+    {% if element.getPrepend or element.getAppend or element.getIcon %}
+        <div class="input-group">
+    {% endif %}
+    {% if element.getPrepend or (element.getIcon and not element.getIconPosition) %}
+        <span class="input-group-text">
+            {% if element.getIcon and not element.getIconPosition %}
+                {{ self.icon(element) }}
+            {% endif %}
+            {{ _(element.getPrepend) }}
+        </span>
+    {% endif %}
+    <input id="{{ element.getId }}" name="{{ formName }}[{{ element.getName }}][{{ element.getTextFieldName }}]" type="text" value="{{ value[element.getTextFieldName] }}" autocomplete="off" placeholder="{{ _(element.getPlaceholder) }}"{% if element.getMaxLength %} maxlength="{{ element.getMaxLength }}"{% endif %} class="form-control {{ element.getClass }}{% if element.getInputSize %} form-control-{{ element.getInputSize }}{% endif %}"{% if element.isDisabled %} disabled{% endif %}{% if element.isReadonly %} readonly{% endif %}{{ self.attributes(element.getAttributes) }}>
+    {% if element.getAppend or (element.getIcon and element.getIconPosition) %}
+        <span class="input-group-text">
+            {% if element.getIcon and element.getIconPosition %}
+                {{ self.icon(element) }}
+            {% endif %}
+            {{ _(element.getAppend) }}
+        </span>
+    {% endif %}
+    {% if element.getPrepend or element.getAppend or element.getIcon %}
+        </div>
+    {% endif %}
+    <input id="{{ element.getId }}-id" name="{{ formName }}[{{ element.getName }}][{{ element.getValueFieldName }}]" type="hidden" value="{{ value[element.getValueFieldName] }}">
+    </div>
+</div>
+{% if element.getInfoText %}
+    {{ self.infoText(element.getInfoText) }}
+{% endif %}

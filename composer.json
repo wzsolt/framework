@@ -1,0 +1,11 @@
+{
+    "name": "root/camo",
+    "require": {
+        "twig/twig": "^3",
+        "phpmailer/phpmailer": "^6.1",
+        "mpdf/mpdf": "^8.0",
+        "phpoffice/phpspreadsheet": "^1.29",
+        "respect/rest": "^0.6.1",
+      "ext-curl": "*"
+    }
+}

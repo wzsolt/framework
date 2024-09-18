@@ -1,0 +1,5 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="form-group{{ element.getGroupClasses }}{% if element.hasError %} has-error{% endif %}">
+    {{ self.label(element) }}
+    <input id="{{ element.getId }}" name="{{ formName }}[{{ element.getName }}]" type="text" value="{{ value }}"{% if element.getClass %} class="form-control {{ element.getClass }}"{% endif %}{{ self.attributes(element.getAttributes) }}>
+</div>

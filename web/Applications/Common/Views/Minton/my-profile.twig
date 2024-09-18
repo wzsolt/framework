@@ -1,0 +1,6 @@
+{% import 'formBuilderMacros.twig' as formBuilder %}
+{{ formBuilder.form(forms.MyProfileForm) }}
+
+<form method="post" action="/ajax/FileUpload/upload-profile-img/" enctype="multipart/form-data" id="img-upload-form">
+    <input type="file" name="picture" id="fileInput" style="display:none"/>
+</form>

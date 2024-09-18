@@ -1,0 +1,29 @@
+// 
+// backgrounds.scss
+//
+
+
+@each $color,
+$value in $theme-colors {
+    .bg-soft-#{$color} {
+        background-color: rgba(($value), 0.25) !important;
+    }
+}
+
+@each $gray,
+$value in $grays {
+    .bg-gray-#{$gray} {
+        background-color: $value !important;
+    }
+}
+
+@each $gray,
+$value in $grays {
+    .bg-soft-gray-#{$gray} {
+        background-color: rgba(($value), 0.25) !important;
+    }
+}
+
+.bg-ghost {
+    opacity: 0.4;
+}

@@ -1,0 +1,22 @@
+{% if table.getSumColumns is not empty %}
+<tfoot>
+<tr class="table-light">
+{% for col in table.getSumColumns %}
+	<td{% if col.getId %} id="{{ col.getId }}"{% endif %} class="fw-bold {{ col.getCellClass }}"{% if col.getStyle %} style="{{ col.getStyle }}"{% endif %}{% if col.getColspan %} colspan="{{ col.getColspan }}"{% endif %}>
+		{% if col.getCaption is not empty %}
+			{{ _(col.getCaption) }}
+		{% endif %}
+		{% if col.isSummarizeField %}
+			{% set val = col.getValue %}
+			{% set unit = col.getUnit %}
+			{% if col.getTemplate is not empty %}
+				{{ include(template_from_string( col.getTemplate )) }}
+			{% else %}
+				{{ val|raw }} {{ unit|raw }}
+			{% endif %}
+		{% endif %}
+	</td>
+{% endfor %}
+</tr>
+</tfoot>
+{% endif %}

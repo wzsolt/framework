@@ -1,0 +1,8 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}" class="progress">
+    <div class="progress-bar{% if element.getColor %} bg-{{ element.getColor }}{% endif %} {{ element.getClass }}" role="progressbar" aria-valuenow="{{ element.getValue }}" aria-valuemin="{{ element.getMinValue }}" aria-valuemax="{{ element.getMaxValue }}" style="width: {{ element.getValue }}%"{{ self.attributes(element.getAttributes) }}>
+        {% if element.showPercentage %}
+            {{ element.getValue }}%
+        {% endif %}
+    </div>
+</div>

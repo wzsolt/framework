@@ -1,0 +1,25 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="upload-container">
+    <div class="input-group">
+        <div class="file-progress form-control position-relative p-0" style="height: 38px;">
+            <div class="file-input p-1">
+                {% if element.getDefaultFile %}
+                    {{ element.getDefaultFile }}
+                {% else %}
+                    {{ _('LBL_NO_FILE_SELECTED') }}
+                {% endif %}
+            </div>
+            <div class="file-progress-bar bg-purple d-none">0%</div>
+        </div>
+
+        <div class="btn btn-primary btn-file" tabindex="500">
+            <i class="fa-solid fa-folder-open"></i>
+            <span class="hidden-xs">{{ _(element.getLabel) }}</span>
+            <input id="{{ element.getId }}" name="{{ element.getName }}" type="file" value="" class="{{ element.getClass }}" {% if element.isDisabled %} disabled{% endif %}{% if element.isReadonly %} readonly{% endif %}{{ self.attributes(element.getAttributes) }} accept="{{ element.getAllowedExtensions }}">
+        </div>
+        <a href="javascript:;" class="btn btn-danger abort-upload d-none" disabled="" tabindex="501" data-bs-toggle="tooltip" title="{{ _('LBL_ABORT_UPLOAD') }}">
+            <i class="fa-solid fa-xmark-circle"></i>
+        </a>
+    </div>
+    <div class="upload-status small text-muted mt-1"></div>
+</div>

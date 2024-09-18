@@ -1,0 +1,53 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="form-group{{ element.getGroupClasses }}{% if element.hasError %} has-error{% endif %}">
+    {{ self.label(element) }}
+    {% set inputValue = value %}
+    {% set inputName = formName ~ '[' ~ element.getName ~ ']' %}
+    {% if element.getType == 'autocomplete' %}
+        {% set inputValue = value.name %}
+        {% set inputName = inputName ~ '[name]' %}
+    {% endif %}
+    {% if element.getClearable %}
+        <span class="input-clearable input-icon{% if element.getInputSize %} input-icon-{{ element.getInputSize }}{% endif %} input-icon-right">
+    {% elseif element.isTogglePasswordVisible %}
+        <span class="input-icon input-icon-right">
+    {% else %}
+        {% if element.getPrepend or element.getAppend or element.getIcon %}
+            <div class="input-group">
+        {% endif %}
+        {% if element.getPrepend or (element.getIcon and not element.getIconPosition) %}
+            <span class="input-group-text">
+                {% if element.getIcon and not element.getIconPosition %}
+                    {{ self.icon(element) }}
+                {% endif %}
+                {{ _(element.getPrepend) }}
+            </span>
+        {% endif %}
+    {% endif %}
+    <input id="{{ element.getId }}" name="{{ inputName }}" type="{{ element.getType }}" value="{{ inputValue }}" placeholder="{{ _(element.getPlaceholder) }}"{% if element.getMaxLength %} maxlength="{{ element.getMaxLength }}"{% endif %} class="form-control {{ element.getClass }}{% if element.getInputSize %} form-control-{{ element.getInputSize }}{% endif %}"{% if element.isDisabled %} disabled{% endif %}{% if element.isReadonly %} readonly{% endif %}{{ self.attributes(element.getAttributes) }}>
+    {% if element.getClearable %}
+            <i class="fa fa-times" data-toggle="clear"></i>
+        </span>
+    {% elseif element.isTogglePasswordVisible %}
+            <i class="fa fa-eye" data-toggle="password"></i>
+        </span>
+    {% else %}
+        {% if element.getAppend or (element.getIcon and element.getIconPosition) %}
+            <span class="input-group-text">
+                {% if element.getIcon and element.getIconPosition %}
+                    {{ self.icon(element) }}
+                {% endif %}
+                {{ _(element.getAppend) }}
+            </span>
+        {% endif %}
+        {% if element.getPrepend or element.getAppend or element.getIcon %}
+            </div>
+        {% endif %}
+    {% endif %}
+    {% if element.getType == 'autocomplete' %}
+    <input id="{{ element.getId }}-id" name="{{ formName }}[{{ element.getName }}][id]" type="hidden" value="{{ value.id }}">
+    {% endif %}
+</div>
+{% if element.getInfoText %}
+    {{ self.infoText(element.getInfoText) }}
+{% endif %}

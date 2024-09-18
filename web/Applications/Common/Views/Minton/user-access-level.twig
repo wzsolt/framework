@@ -1,0 +1,91 @@
+{% import 'formBuilderMacros.twig' as form %}
+{% import 'user-access-tools.twig' as tools %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <form action=".?change" method="post">
+                        <div class="mb-2">
+                            {{ form.renderElement(controls.appSelector, app) }}
+                        </div>
+
+                        <table class="table user-access-rights-editor table-hover table-condensed">
+                            <thead class="thead-primary">
+                                <tr class="d-flex bg-soft-light">
+                                    <th class="col p-1">
+                                        {{ _("LBL_USER_GROUP") }}
+                                    </th>
+                                    <th colspan="{{ roles|length }}" class="col text-center p-1">
+                                        {{ _("LBL_USER_ROLES") }}
+                                    </th>
+                                </tr>
+                                <tr class="d-flex">
+                                    <th class="col-{{ 12 - (roles|length * 2) }} border-t-0 ps-0 pt-2">
+                                        {{ form.renderElement(controls.groupSelector, group) }}
+                                    </th>
+                                    {% for role in roles %}
+                                        <th class="col-2 text-center border-t-0 alert-{{ role.color }}">{{ role.name }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for menuItem in menu %}
+                                {{ tools.accessControl(menuItem, app, group, roles, accessRights, controls.accessSelector, 1) }}
+                                {% if menuItem.displayType == 1 %}
+                                    {{ tools.functionControl(menuItem.getKey, app, group, roles, functions, functionRights, controls.functionSelector, 1) }}
+                                {% endif %}
+
+                                {% if menuItem.itemCount > 0 %}
+
+                                    {% for menuItemLevel1 in menuItem.getItems %}
+
+                                        {{ tools.accessControl(menuItemLevel1, app, group, roles, accessRights, controls.accessSelector, 3) }}
+                                        {% if menuItemLevel1.displayType == 1 %}
+                                            {{ tools.functionControl(menuItemLevel1.getKey, app, group, roles, functions, functionRights, controls.functionSelector, 3) }}
+                                        {% endif %}
+
+                                        {% if menuItemLevel1.itemCount > 0 %}
+
+                                            {% for menuItemLevel2 in menuItemLevel1.getItems %}
+                                                {{ tools.accessControl(menuItemLevel2, app, group, roles, accessRights, controls.accessSelector, 5) }}
+                                                {% if menuItemLevel2.displayType == 1 %}
+                                                    {{ tools.functionControl(menuItemLevel2.getKey, app, group, roles, functions, functionRights, controls.functionSelector, 5) }}
+                                                {% endif %}
+                                            {% endfor %}
+
+                                        {% endif %}
+
+                                    {% endfor %}
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                            <tr class="d-flex">
+                                <td class="col-{{ 12 - (roles|length * 2) }}">
+                                    <b class="text-primary">
+                                        <i class="fa-light fa-ballot-check me-1"></i>
+                                        {{ _('LBL_GENERAL_ROLES') }}
+                                    </b>
+                                    <div class="float-end">
+                                        <a href="/ajax/forms/AddFunctionForm/?id=0&fkeys=fnGeneral,{{ app }},{{ group }}" data-bs-toggle="modal" data-bs-target="#ajax-modal" class="add-function">
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="col" colspan="{{ roles|length }}"></td>
+                            </tr>
+
+                            {{ tools.functionControl('fnGeneral', app, group, roles, functions, functionRights, controls.functionSelector, 0) }}
+
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

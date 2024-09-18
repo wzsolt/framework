@@ -1,0 +1,85 @@
+.collapse-toggle[aria-expanded=false] i::before {
+  content: "\f078";
+}
+.collapse-toggle[aria-expanded=true] i::before {
+  content: "\f077";
+}
+
+.element-header .cbt-button {
+  display: none;
+}
+
+.element-header:hover .cbt-button {
+  display: inline-block;
+}
+
+.cbt-sorter {
+  cursor: move;
+}
+
+.cbt-sorter-placeholder {
+  margin-top: 1.5rem !important;
+  background-color: rgba($warning, 0.18);
+  border: 1px dashed $gray-400;
+  height: 50px;
+}
+
+.inline-html-editor .card {
+  background-color: $white !important;
+}
+.inline-html-editor .note-toolbar {
+  background-color: $white !important;
+}
+.inline-html-editor .btn-light {
+  background-color: $white !important;
+  color: $black !important;
+}
+
+.inline-html-editor .html-content {
+  border: 1px dashed transparent;
+  position: relative;
+}
+
+.inline-html-editor .html-content:hover {
+  border-color: $primary;
+}
+
+.inline-html-editor .html-content:hover::after {
+  font-family: "Font Awesome 6 Pro";
+  content: "\f044";
+  top: 5px;
+  right: 5px;
+  position: absolute;
+  color: $primary;
+}
+
+#cbt-editor .progress div {
+  font-size: $font-size-base !important;
+}
+
+.element-editor .nav-tabs .nav-link.active,
+.element-editor .nav-tabs .nav-item.show .nav-link {
+  color: #94a0ad !important;
+  background-color: transparent !important;
+}
+
+.element-editor .nav-tabs > li > a,
+.element-editor .nav-pills > li > a {
+  color: $text-color-h !important;
+}
+
+.bg-white.form-control::placeholder {
+  color: $gray-600 !important;
+}
+
+@each $color, $value in $theme-colors {
+  .hover-#{$color}:hover {
+    color: $value !important;
+  }
+}
+
+@each $color, $value in $grays {
+  .text-gray-#{$color} {
+    color: $value;
+  }
+}

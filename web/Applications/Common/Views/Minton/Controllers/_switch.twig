@@ -1,0 +1,17 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="form-group{{ element.getGroupClasses }}{% if element.hasError %} has-error{% endif %}">
+    {% if formName %}
+        {% set inputName = formName ~ '[' ~ element.getName ~ ']' %}
+    {% else %}
+        {% set inputName = element.getName %}
+    {% endif %}
+    <div class="checkbox{% if element.getColor %} checkbox-slider-{{ element.getColor }}{% endif %} checkbox-slider--b-flat">
+        <label class="position-relative">
+            <input id="{{ element.getId }}" name="{{ inputName }}" type="checkbox" value="{{ element.getValueOn }}"{% if element.isDisabled %} disabled="disabled"{% endif %}{% if element.getValueOn == value %} checked="checked"{% endif %} class="{{ element.getClass }}"{{ self.attributes(element.getAttributes) }} />
+            <span class="ms-2">{% if element.getLabel %}{{ self.label(element, false) }}{% endif %}</span>
+        </label>
+    </div>
+</div>
+{% if element.getInfoText %}
+    {{ self.infoText(element.getInfoText) }}
+{% endif %}

@@ -1,0 +1,33 @@
+<div class="row-fluid align-center">
+    {% if fileType == 'pdf' %}
+        <embed class="embed-responsive" style="float:none;display:inline;height:800px;width:100%;" src="{{ fileUrl }}&m=inline"/>
+    {% elseif fileType == 'jpg' or fileType == 'jpeg' or fileType == 'png' or fileType == 'svg' %}
+        <div class="img-zoom">
+            <img src="/{{ fileUrl }}" class="img-fluid" alt=""/>
+        </div>
+    {% elseif fileType == 'mp4' or fileType == 'mkv' or fileType == 'webm' or fileType == 'avi' or fileType == 'mov' or fileType == 'wmv' %}
+        <div class="text-center">
+            <video id="video-preview"
+                    class="video-js vjs-fluid"
+                    controls
+                    fluid
+                    preload="auto"
+                    width="800"
+                    height="600"
+                    poster=""
+                    data-setup="{}">
+                <source src="{{ fileUrl }}" type="video/{{ fileType }}" />
+                <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                </p>
+            </video>
+        </div>
+        <script src="/vendor/video/video.min.js"></script>
+    {% else %}
+        <div class="alert alert-warning">
+            {{ _('LBL_NO_PREVIEW_FOR_THIS_FILETYPE') }}
+            <br>
+            <a href="{{ fileUrl }}" target="_blank"><i class="fa fa-cloud-download-alt"></i> {{ _('LBL_DOWNLOAD_FILE') }}</a>
+        </div>
+    {% endif %}
+</div>

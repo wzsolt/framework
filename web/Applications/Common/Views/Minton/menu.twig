@@ -1,0 +1,52 @@
+{% import "menu-elements" ~ constant('TWIG_FILE_EXTENSION') as element %}
+<div id="sidebar-menu">
+    <ul class="side-menu">
+        {% for menuItem in menuSidebar %}
+            {% if menuItem.getDisplayType == 1 or menuItem.getDisplayType == 2 %}
+                {% if menuItem.itemCount > 0 and menuItem.getDisplayType == 2 %}
+
+                    <li{% if menuItem.isSelected %} class="menuitem-active"{% endif %}>
+                        {{ element.sidebarMenu(menuItem) }}
+
+                        <div class="collapse{% if menuItem.isSelected %} show{% endif %}" id="menu-{{ menuItem.getKey }}">
+                            <ul class="nav-second-level">
+                                {% for menuItemLevel1 in menuItem.getItems %}
+                                    {% if menuItemLevel1.itemCount > 0 %}
+
+                                        <li{% if menuItemLevel1.isSelected %} class="menuitem-active"{% endif %}>
+                                            {{ element.sidebarMenu(menuItemLevel1) }}
+
+                                            <div class="collapse{% if menuItemLevel1.isSelected %} show{% endif %}" id="menu-{{ menuItemLevel1.getKey }}">
+                                                <ul class="nav-second-level">
+                                                    {% for menuItemLevel2 in menuItemLevel1.getItems %}
+                                                        <li>
+                                                            {{ element.sidebarMenu(menuItemLevel2) }}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    {% elseif not menuItemLevel1.isContainer %}
+                                        <li>
+                                            {{ element.sidebarMenu(menuItemLevel1) }}
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+                {% else %}
+                    <li{% if menuItem.isSelected %} class="menuitem-active"{% endif %}>
+                        {{ element.sidebarMenu(menuItem) }}
+                    </li>
+                {% endif %}
+            {% elseif menuItem.getDisplayType == 10 %}
+                <li class="menu-title">
+                    {{ _(menuItem.getLabel) }}
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+<div class="clearfix"></div>
+

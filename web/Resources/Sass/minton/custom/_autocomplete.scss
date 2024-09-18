@@ -1,0 +1,57 @@
+.ui-autocomplete {
+  z-index: 2500 !important;
+}
+
+.ui-autocomplete {
+  max-height: 500px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.ui-menu .ui-menu-item {
+  padding: 2px;
+}
+
+.ui-menu .ui-menu-item-wrapper {
+  padding: $input-padding-y $input-padding-x;
+  border: none;
+}
+
+.ui-autocomplete {
+  border: none;
+  border-radius: 4px;
+  -webkit-box-shadow: $dropdown-box-shadow2;
+  box-shadow: $dropdown-box-shadow2;
+}
+
+.ui-autocomplete-category {
+  background-color: $primary !important;
+  color: $white;
+  padding: 10px 14px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.ui-widget-content {
+  border: none !important;
+  background-color: $gray-200 !important;
+  color: $body-color !important;
+}
+
+.ui-menu .ui-menu-item a {
+  display: block;
+  padding: 3px 1em 3px 0.4em;
+  text-decoration: none;
+}
+
+.ui-state-active,
+.ui-state-focus {
+  border: 1px solid $primary !important;
+  background-color: theme-color-level('primary', -9) !important;
+  color: $white !important;
+}
+
+.ui-autocomplete-subtext {
+  color: $text-muted;
+  font-size: $small-font-size;
+}

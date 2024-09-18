@@ -1,0 +1,72 @@
+{% import "formBuilderMacros.twig" as formBuilder %}
+
+{% if form.getErrors|length > 0 %}
+    {% set type = 'danger' %}
+    {% for error in form.getErrors %}
+        {% if error.type == 1 %}
+            {% set type = 'info' %}
+        {% elseif error.type == 2 %}
+            {% set type = 'warning' %}
+        {% elseif error.type == 3 %}
+            {% set type = 'danger' %}
+        {% else %}
+            {% set type = 'success' %}
+        {% endif %}
+    {% endfor %}
+
+    <div class="alert alert-{{ type }}" role="alert">
+        {% for error in form.getErrors %}
+            <div>
+                {{ _(error.message)|raw }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if form.getIncludeBefore %}
+    {% include form.getIncludeBefore ~ '.twig' %}
+{% endif %}
+
+{% if form.view %}
+    {{ formBuilder.view(form) }}
+{% else %}
+    <form action="{{ form.getAction }}" method="post" id="{{ form.getName }}-form"{% if form.isUpload %} enctype="multipart/form-data"{% endif %} class="form-horizontal" data-modal="true" onsubmit="postModalForm(this);return false;">
+        {% if form.getSections %}
+            {% if form.getSectionType == 'tab' %}
+                <section>
+                    <ul class="nav nav-tabs nav-gap-x-1" role="tablist">
+                        {% for section in form.getSections %}
+                            <li id="tab-{{ section.getId }}" class="nav-item">
+                                <a href="#{{ section.getId }}" data-bs-toggle="tab" class="nav-link has-icon{% if section.isActive %} active{% endif %}" style="{{ section.getStyle }}">
+                                    {% if section.getIcon %}
+                                        <i class="{{ section.getIcon }} me-2"></i>
+                                    {% endif %}
+                                    {{ _(section.getTitle) }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="tab-content">
+                        {% for section in form.getSections %}
+                            <div class="tab-pane{% if section.isActive %} active{% endif %}" id="{{ section.getId }}">
+                                {{ formBuilder.renderElements(form.getControls(section.getId), form.getValues, form.getName, form.getErrors) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% else %}
+                {% for section in form.getSections %}
+                    <section>
+                        {{ formBuilder.renderElements(form.getControls(section.getId), form.getValues, form.getName, form.getErrors) }}
+                    </section>
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            {{ formBuilder.renderElements(form.getControls, form.getValues, form.getName, form.getErrors) }}
+        {% endif %}
+    </form>
+{% endif %}
+
+{% if form.getIncludeAfter %}
+    {% include form.getIncludeAfter ~ '.twig' %}
+{% endif %}

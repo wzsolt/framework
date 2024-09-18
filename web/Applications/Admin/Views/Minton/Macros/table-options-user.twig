@@ -1,0 +1,7 @@
+{% if table.isEdit %}
+    {% if table.isModalForm %}
+        <a data-href="{{ table.getName }}?id={{ row.__id }}&action=sendPassword&fkeys={{ foreignKeyValues }}" href="#" data-bs-toggle="modal" data-bs-target="#confirm-delete" data-confirm-question="{{ _('CONFIRM_PASSWORD_SEND')|e }}" data-title="{{ _('LBL_SEND_PASSWORD') }}" data-confirm-button="{{ _('LBL_SEND') }}" data-color="warning" class="btn btn-outline-warning btn-xs waves-effect waves-light"><i class="fa fa-key" title="{{ _('BTN_SEND_PASSWORD') }}" data-bs-toggle="tooltip"></i></a>
+    {% else %}
+        <a data-href="{{ table.getName }}/sendPassword/?id={{ row.__id }}&fkeys={{ foreignKeyValues }}" href="#" data-bs-toggle="modal" data-bs-target="#confirm-delete" data-confirm-question="{{ _('CONFIRM_PASSWORD_SEND')|e }}" data-title="{{ _('LBL_SEND_PASSWORD') }}" data-confirm-button="{{ _('LBL_SEND') }}" data-color="warning" class="btn btn-outline-warning btn-xs waves-effect waves-light"><i class="fa fa-key" title="{{ _('BTN_SEND_PASSWORD') }}" data-bs-toggle="tooltip"></i></a>
+    {% endif %}
+{% endif %}

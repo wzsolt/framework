@@ -1,0 +1,26 @@
+<body>
+<div class="container mt-4">
+    {% if settings.darkTheme %}
+        <a href="/" class="logo text-center">
+            <span class="logo-lg">
+                {% if settings.logo.dark %}
+                    <img src="{{ uploads }}logo-dark.svg" alt="{{ settings.siteName }}" height="50">
+                {% else %}
+                    <span class="logo-lg-text-dark">{{ settings.siteName }}</span>
+                {% endif %}
+            </span>
+        </a>
+    {% else %}
+        <a href="/" class="logo text-center">
+            <span class="logo-lg">
+                {% if settings.logo.light %}
+                    <img src="{{ uploads }}logo-light.svg" alt="{{ settings.siteName }}" height="50">
+                {% else %}
+                    <span class="logo-lg-text-light">{{ settings.siteName }}</span>
+                {% endif %}
+            </span>
+        </a>
+    {% endif %}
+
+    {% include pageTemplate ~ '.twig' %}
+</div>

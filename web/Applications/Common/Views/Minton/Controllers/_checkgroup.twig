@@ -1,0 +1,34 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="form-group{{ element.getGroupClasses }}{% if element.hasError %} has-error{% endif %}">
+    {{ self.label(element) }}
+    {% set isChecked = false %}
+
+    {% if not element.isBinary %}
+        {% if id in value %}
+            {% set isChecked = true %}
+        {% endif %}
+    {% else %}
+        {% set value = value[0] %}
+    {% endif %}
+
+    {% for id, option in element.getOptions %}
+    <div class="form-check{% if element.getColor %} custom-checkbox-{{ element.getColor }}{% endif %}">
+        {% if element.isBinary %}
+            {% if (id b-and value) == id %}
+                {% set isChecked = true %}
+            {% else %}
+                {% set isChecked = false %}
+            {% endif %}
+        {% endif %}
+
+        <input id="{{ element.getId }}-{{ id }}" name="{{ formName }}[{{ element.getName }}][]" type="checkbox" value="{{ id }}"{% if element.isDisabled %} disabled="disabled"{% endif %}{% if isChecked %} checked="checked"{% endif %} class="form-check-input{{ element.getClass }}"{{ self.attributes(element.getAttributes) }} />
+        <label for="{{ element.getId }}-{{ id }}" class="form-check-label">
+            {% if option is iterable %}
+                {{ _(option.name) }}
+            {% elseif option %}
+                {{ _(option) }}
+            {% endif %}
+        </label>
+    </div>
+    {% endfor %}
+</div>

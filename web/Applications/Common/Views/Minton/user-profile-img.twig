@@ -1,0 +1,19 @@
+<div class="profile-img-editor text-center mt-3">
+    {% if upload %}
+    <div class="editArea">
+        <div class="editTools">
+            <a href="javascript:void(0);" class="upload-profile-img"><i class="fa-solid fa-camera"></i></a>
+            <a href="javascript:void(0);" class="delete-profile-img{% if not fileName %} d-none{% endif %} ms-2"><i class="fa-solid fa-trash-alt"></i></a>
+        </div>
+    </div>
+    {% endif %}
+    <img src="{{ src }}" class="rounded-circle user-profile-img border-1 border-light" width="200" alt="">
+</div>
+
+{% if showLoginInfo %}
+<div class="text-center">
+    {{ _('LBL_REGISTERED') }}: {{ _date(registered, 1) }}
+    <br>
+    {{ _('LBL_LAST_LOGIN') }}: {{ _date(lastLogin, 5) }}
+</div>
+{% endif %}

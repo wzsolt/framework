@@ -1,0 +1,19 @@
+<form action="./" method="post" class="d-block">
+    <div class="mb-3 col-lg-2">
+        <label for="userId" class="form-label">User ID</label>
+        <input type="text" class="form-control" id="userId" name="userId" value="{{ userId }}">
+    </div>
+    <button type="submit" name="submit" class="btn btn-primary me-2">Submit</button>
+    <button type="submit" name="delete-user-cache" class="btn btn-danger" value="1">Delete user profile from cache</button>
+    <button type="submit" name="delete-all-user-cache" class="btn btn-danger" value="1">Delete ALL user profiles from cache</button>
+</form>
+
+<hr>
+
+{% if success %}
+    <div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+<div class="mt-4">
+    {{ _d(user) }}
+</div>

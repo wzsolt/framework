@@ -1,0 +1,11 @@
+{% if success %}
+    <div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+<form action="./?page=labels" method="post">
+    <div class="d-grid gap-2 col-4">
+        <button type="submit" class="btn btn-primary" name="clear-labels" value="1">Clear <b>all languages</b> from memcache</button>
+        <button type="submit" class="btn btn-primary" name="cleanup" value="2">Cleanup dictionary</button>
+        <button type="submit" class="btn btn-danger" name="clear-twig" value="3">Clear <b>twig</b> cache</button>
+    </div>
+</form>

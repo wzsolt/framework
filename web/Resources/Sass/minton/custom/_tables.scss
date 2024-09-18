@@ -1,0 +1,41 @@
+.table-options .btn {
+  padding: 0 .25rem !important;
+}
+
+.no-hover {
+  pointer-events:none;
+}
+
+.bg-deleted {
+  background-color: #fbf2f0;
+  text-decoration: line-through;
+  text-decoration-color: #c2573c;
+}
+
+legend {
+  font-size: $h4-font-size;
+}
+
+.tr-selected {
+   background-color: $gray-300;
+}
+
+.tr-selected td {
+  color: $white !important;
+}
+
+#file-modal {
+  z-index: 1058;
+}
+
+.fh-border-left {
+  border-left: 4px solid $table-border-color !important;
+}
+
+.group-level-1 th {
+
+}
+
+.group-level-2 th {
+  padding-left: 3rem;
+}

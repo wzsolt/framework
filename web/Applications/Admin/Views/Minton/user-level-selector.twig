@@ -1,0 +1,14 @@
+<label class="control-label bold mb-2">
+    {{ _('LBL_USER_GROUPS') }}
+</label>
+{% for groupId, group in userLevels %}
+    <div><b class="text-primary">{{ _('LBL_GROUP_' ~ groupId) }}</b></div>
+    <div class="form-group ps-2">
+    {% for roleId, role in group %}
+        <div class="form-check form-check-{{ role.color }}">
+            <input id="{{ groupId }}-{{ roleId }}" type="checkbox" {% if roleId in values[name][groupId] %} checked="checked" {% endif %} name="{{ formName }}[{{ name }}][{{ groupId }}][]" value="{{ roleId }}" class="form-check-input" />
+            <label for="{{ groupId }}-{{ roleId }}" class="form-check-label">{{ _(role.label) }}</label>
+        </div>
+    {% endfor %}
+    </div>
+{% endfor %}

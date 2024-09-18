@@ -1,0 +1,214 @@
+{% import "formBuilderMacros.twig" as formBuilder %}
+{% if form.getTitle %}
+    <div class="border-0 mb-3">
+        <h4 class="page-title text-secondary d-inline mb-0">{{ _(form.getTitle)|raw }}{% if form.getSubTitle %}:{% endif %}</h4>
+        {% if form.getFormSelect %}
+            <div class="dropdown inline">
+                <a href="javascript:;" class="text-warning font-light dropdown-toggle" data-bs-toggle="dropdown">
+                    {{ _(form.getSubTitle)|raw }}
+                    <i class="mdi mdi-chevron-down"></i>
+                </a>
+                <div class="dropdown-menu">
+                    {% for item in form.getFormSelect %}
+                        <a class="dropdown-item" href="{{ item.url }}">{{ item.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            {% if form.getSubTitle %}<h4 class="text-info font-light d-inline">{{ _(form.getSubTitle) }}</h4>{% endif %}
+        {% endif %}
+    </div>
+{% endif %}
+
+{% if form.getErrors|length > 0 and form.displayErrors %}
+    <div class="alert alert-danger" role="alert">
+        <h4 class="mb-1 alert-heading">
+            <i class="fas fa-exclamation-triangle me-1 mb-1"></i>
+            {{ _('ERR_GENERIC') }}
+        </h4>
+
+        {% for error in form.getErrors %}
+            {% if error.message is iterable %}
+                <div>{{ _(error.message.title)|raw }}</div>
+                <ul>
+                {% for message in error.message.messages %}
+                    <li>{{ _(message)|raw }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <div>{{ _(error.message)|raw }}</div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if context.messages and form.displayErrors %}
+    {% for type, message in context.messages %}
+    <div class="alert alert-{{ type }} bg-{{ type }} text-white border-0" role="alert">
+        <div class="alert-heading text-{{ type }}-m1">
+            {% if type == 'danger' %}
+                <i class="fas fa-exclamation-triangle me-1 mb-1"></i>
+            {% elseif  type == 'warning' %}
+                <i class="fas fa-exclamation-circle me-1 mb-1"></i>
+            {% elseif  type == 'success' %}
+                <i class="fas fa-check me-1 mb-1"></i>
+            {% else %}
+                <i class="fas fa-info-circle me-3 fa-2x text-blue"></i>
+            {% endif %}
+
+            {% for msg in message %}
+                <p>{{ msg }}</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+
+{% if form.getIncludeBefore %}
+    {% include form.getIncludeBefore ~ '.twig' %}
+{% endif %}
+
+{% if form.getSections %}
+    {% if form.getSectionType == 'tab' %}
+        <div class="row gutters-sm">
+            {% if form.isSidebarVisible %}
+            <div class="col-lg-3 d-none d-lg-block">
+                <nav class="nav flex-column nav-pills nav-gap-y-1">
+                    {% for section in form.getSections %}
+                    <a {% if section.getLink %}href="{{ section.getLink }}"{% else %}href="#{{ section.getId }}" data-bs-toggle="tab"{% endif %} class="nav-item nav-link has-icon nav-link-faded{% if section.getLink %} mt-3{% endif %}{% if section.isActive %} active{% endif %} {{ section.getClass }}"{{ formBuilder.attributes(section.getAttributes) }}>
+                        {% if section.getIcon %}
+                            <i class="{{ section.getIcon }} fa-fw me-1"></i>
+                        {% endif %}
+                        {{ _(section.getTitle) }}
+                    </a>
+                    {% endfor %}
+                </nav>
+            </div>
+            {% endif %}
+            <div class="{% if form.isSidebarVisible %}col-lg-9{% else %}{{ form.formWidth }}{% endif %}">
+                <div class="card">
+                    <div class="card-body pb-0 pt-2{% if form.isSidebarVisible %} d-lg-none{% endif %}">
+                        <ul class="nav nav-tabs nav-bordered" role="tablist">
+                            {% for section in form.getSections %}
+                                <li class="nav-item">
+                                    <a {% if section.getLink %}href="{{ section.getLink }}"{% else %}href="#{{ section.getId }}" data-bs-toggle="tab"{% endif %} class="nav-link has-icon{% if section.isActive %} active{% endif %} {{ section.getClass }}"{{ formBuilder.attributes(section.getAttributes) }}>
+                                        {% if section.getIcon %}
+                                            <i class="{{ section.getIcon }} fa-fw"></i>
+                                        {% endif %}
+                                        <span class="d-none d-sm-inline">{{ _(section.getTitle) }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content pt-0">
+                        {% for section in form.getSections %}
+                            <div class="tab-pane{% if section.isActive %} active{% endif %}" id="{{ section.getId }}">
+                                {% if section.hasElements %}
+                                {{ formBuilder.renderElements(form.getControls(section.getId), form.getValues, form.getName, form.getErrors) }}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+
+                    {% if form.getButtons|length > 0 %}
+                        <div class="d-flex card-footer- p-2 border-top{% if form.cssClass.footer %} {{ form.cssClass.footer }}{% endif %}">
+                            <div class="justify-content-end ms-auto">
+                                {% for button in form.getButtons %}
+                                    {% if button.showInEditor and not button.isHidden  %}
+                                    {{ formBuilder.button(button) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        {% for section in form.getSections %}
+            <div class="row gutters-sm mb-4">
+                {% if form.isSidebarVisible %}
+                <div class="col-md-4 d-none d-md-block">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-primary">
+                                {% if section.getIcon %}
+                                    <i class="{{ section.getIcon  }} fa-fw me-1"></i>
+                                {% endif %}
+                                {{ _(section.getTitle) }}
+                            </h4>
+                            {% if section.getText %}
+                                {{ _(section.getText) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="{% if form.isSidebarVisible %}col-md-8{% else %}{% if section.getClass %}{{ section.getClass }}{% else %}{{ form.formWidth }}{% endif %}{% endif %}">
+                    <div class="card">
+                        {% if not form.isSidebarVisible and section.getTitle %}
+                            <div class="card-header bg-primary">
+                                <h4 class="text-white">
+                                    {% if section.getIcon %}
+                                        <i class="{{ section.getIcon  }} fa-fw me-1"></i>
+                                    {% endif %}
+                                    {{ _(section.getTitle) }}
+                                </h4>
+                                {% if section.getText %}
+                                    {{ _(section.getText) }}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            {% if section.hasElements %}
+                                {{ formBuilder.renderElements(form.getControls(section.getId), form.getValues, form.getName, form.getErrors) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% if form.getButtons|length > 0 %}
+            <div class="row">
+                <div class="d-flex pt-2 mb-3 {{ form.formWidth}} {% if form.cssClass.footer %} {{ form.cssClass.footer }}{% endif %}">
+                    <div class="justify-content-end ms-auto">
+                        {% for button in form.getButtons %}
+                            {% if button.showInEditor and not button.isHidden  %}
+                            {{ formBuilder.button(button) }}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+{% else %}
+    <div class="{% if form.boxed %}card bcard{% endif %}{% if form.cssClass.card %} {{ form.cssClass.card }}{% endif %}">
+        {% if form.boxed %}
+            <div class="card-body{% if form.cssClass.body %} {{ form.cssClass.body }}{% endif %}">
+                {{ formBuilder.renderElements(form.getControls, form.getValues, form.getName, form.getErrors) }}
+            </div>
+        {% else %}
+            {{ formBuilder.renderElements(form.getControls, form.getValues, form.getName, form.getErrors) }}
+        {% endif %}
+
+        {% if form.getButtons|length > 0 %}
+            <div class="d-flex {% if form.boxed %}card-footer p-3 bg-gray-100 border-top{% else %}mt-4{% endif %}{% if form.cssClass.footer %} {{ form.cssClass.footer }}{% endif %}">
+                <div class="justify-content-end ms-auto">
+                    {% for button in form.getButtons %}
+                        {% if button.showInEditor and not button.isHidden %}
+                        {{ formBuilder.button(button) }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endif %}
+
+{% if form.getIncludeAfter %}
+    {% include form.getIncludeAfter ~ '.twig' %}
+{% endif %}

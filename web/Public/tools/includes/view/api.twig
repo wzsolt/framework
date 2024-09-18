@@ -1,0 +1,254 @@
+<div class="mt-4">
+    <h2>API clients</h2>
+    {% if not editMode %}
+        <table class="table table-bordered table-sm table-striped table-hover">
+            <thead class="table-light">
+            <tr>
+                <th class="text-center">Enabled</th>
+                <th>Connection name</th>
+                <th class="text-center">Type</th>
+                <th class="text-center">Services</th>
+                <th class="text-center">Expiry</th>
+                <th class="text-center">Last request</th>
+                <th class="text-center">Options</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for id, user in users %}
+                <tr>
+                    <td class="col-1 text-center">
+                        {% if user.enabled %}
+                            <i class="fa-solid fa-circle-check text-success"></i>
+                        {% else %}
+                            <i class="fa-solid fa-circle-xmark text-danger"></i>
+                        {% endif %}
+                    </td>
+                    <td class="col"><a href="?page=api&edit={{ id }}">{{ user.name }}</a></td>
+                    <td class="text-center col-1">
+                        {% if user.type %}
+                            API key
+                        {% else %}
+                            Basic Auth
+                        {% endif %}
+                    </td>
+                    <td class="text-center col-2">
+                        {{ user.services }}
+                    </td>
+                    <td class="text-center col-2">
+                        {% if not user.expiry %}
+                            Never
+                        {% else %}
+                            {{ user.expiry }}
+                        {% endif %}
+                    </td>
+                    <td class="text-center col-2">
+                        {% if not user.lastRequest %}
+                            Never
+                        {% else %}
+                            {{ user.lastRequest }}
+                        {% endif %}
+                    </td>
+                    <td class="text-center col-1">
+                        <a href="?page=api&edit={{ id }}"><i class="fa-solid fa-pencil me-1 text-primary"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <a class="btn btn-primary mt-3" href="?page=api&edit=0">
+            <i class="fa-solid fa-plus-circle me-1"></i>
+            New client
+        </a>
+
+    {% else %}
+    <form id="frmApi" action="." method="post" class="my-4">
+        <input type="hidden" name="page" value="api">
+        <input type="hidden" id="id" name="edit" value="{{ id }}">
+
+        <div class="row">
+            <div class="col-12 col-lg-6">
+
+                {% if id %}
+                <div class="alert alert-warning mb-3">
+                    Last request: <b>{% if not api.lastRequest %}Never{% else %}{{ api.lastRequest }}{% endif %}</b>
+                    <br>
+                    Failed logins: <b>{{ api.failedLogins }}</b>
+                </div>
+                {% endif %}
+
+                {% if success %}
+                    <div class="alert alert-success">
+                        <i class="fa-solid fa-check me-1"></i>
+                        Password changed successfully!
+                    </div>
+                {% endif %}
+
+                {% if errors %}
+                    <div class="alert alert-danger">
+                        <i class="fa-solid fa-exclamation-triangle me-1"></i>
+                        Please correct the missing fields!
+                    </div>
+                {% endif %}
+
+                <div class="mb-3 col-12 col-lg-6">
+                    <label for="name" class="form-label"><b>Client name</b></label>
+                    <input id="name" type="text" name="api[name]" class="form-control{% if errors.name %} is-invalid{% endif %}" value="{{ api.name }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="expiry" class="form-label"><b>Access</b></label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" name="api[enabled]" value="1" id="enabled" {% if api.enabled %} checked{% endif %}>
+                        <label class="form-check-label" for="enabled">API enabled / disabled</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="type" class="form-label"><b>Authorization type</b></label>
+                    <div class="form-check">
+                        <input class="form-check-input set-api-type" type="radio" name="api[type]" id="type-1" value="0" {% if api.type == 0 %} checked{% endif %}{% if api.id %} disabled{% endif %}>
+                        <label class="form-check-label" for="type-1">Basic Auth</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input set-api-type" type="radio" name="api[type]" id="type-2" value="1" {% if api.type == 1 %} checked{% endif %}{% if api.id %} disabled{% endif %}>
+                        <label class="form-check-label" for="type-2">API key</label>
+                    </div>
+                </div>
+
+                <fieldset id="api-key" class="mb-3{% if api.type == 1 and id %}{% else %} d-none{% endif %}">
+                    <div class="alert border-primary">
+                        <label for="key" class="form-label text-primary"><b>API key</b></label>
+
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-key-skeleton"></i></span>
+                            <input id="key" type="text" name="api[apiKey]" class="form-control select-copy text-code" readonly value="{{ api.apiKey }}">
+                        </div>
+                        <div id="copy-info" class="small text-muted">&nbsp;</div>
+                    </div>
+                </fieldset>
+
+                <fieldset id="api-username" class="{% if api.type == 1 %} d-none{% endif %}">
+                    <div class="mb-3 col-12 col-lg-6">
+                        <label for="username" class="form-label"><b>Username</b></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                            <input id="username" type="text" name="api[userName]" class="form-control{% if errors.userName %} is-invalid{% endif %}" value="{{ api.userName }}"{% if api.id %} readonly{% endif %}>
+                        </div>
+                    </div>
+                    {% if not id %}
+                        <div class="mb-3 col-12 col-lg-6">
+                            <label for="password" class="form-label"><b>Password</b></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                <input id="password" type="password" name="api[password]" class="form-control border-end-0{% if errors.password %} is-invalid{% endif %}" value="{{ api.password }}">
+                                <span class="input-group-text bg-white border-start-0"><i class="fa fa-eye toggle-password text-muted" style="cursor: pointer"></i></span>
+                            </div>
+                            <div class="small">
+                                <a href="javascript:;" class="small generate-password">Generate password</a>
+                            </div>
+                        </div>
+                        <div class="mb-3 col-12 col-lg-6">
+                            <label for="password2" class="form-label"><b>Confirm Password</b></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                <input id="password2" type="password" name="api[password2]" class="form-control border-end-0{% if errors.password2 %} is-invalid{% endif %}" value="{{ api.password2 }}">
+                                <span class="input-group-text bg-white border-start-0"><i class="fa fa-eye toggle-password text-muted" style="cursor: pointer"></i></span>
+                            </div>
+                        </div>
+                    {% endif %}
+                </fieldset>
+
+                <div class="mb-3 col-12 col-lg-4">
+                    <label for="expiry" class="form-label"><b>Expiry</b></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa-solid fa-calendar"></i></span>
+                        <input id="expiry" type="text" name="api[expiry]" class="form-control border-end-0 date-picker{% if errors.expiry %} is-invalid{% endif %}" value="{{ api.expiry }}">
+                        <span class="input-group-text border-start-0"><i class="fa fa-xmark clear-value text-muted" style="cursor: pointer"></i></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="expiry" class="form-label{% if errors.serviceList %} has-error{% endif %}"><b>Allowed Services</b></label>
+                    {% for sid, service in services %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="api[serviceList][]" value="{{ sid }}" id="services-{{ sid }}" {% if sid in api.serviceList %} checked{% endif %}>
+                            <label class="form-check-label{% if errors.serviceList %} has-error{% endif %}" for="services-{{ sid }}">{{ service[version].class }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3col-12 col-lg-6">
+                    <label for="whitelist" class="form-label"><b>IP Whitelist</b></label>
+                    <textarea name="api[ipWhitelist]" class="form-control text-code" id="whitelist" cols="30" rows="4">{{ api.ipWhitelist|join('\n') }}</textarea>
+                    <div class="small text-muted">List of fix IP addresses, separate each IP in new line</div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" name="save" class="btn btn-primary me-2" value="1">
+                        <i class="fa-solid fa-check me-1"></i>
+                        Save
+                    </button>
+                </div>
+
+                {% if id and api.type == 0 %}
+                    <div class="alert border-warning mt-4">
+                        <h4 class="text-warning">Set new password</h4>
+
+                        Set/change password for the selected API client.
+
+                        <div class="mt-3 mb-3 col-12 col-lg-6">
+                            <label for="change-password" class="form-label"><b>New Password</b></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                <input id="password" type="password" name="pwd[password]" class="form-control border-end-0{% if errors.password %} is-invalid{% endif %}" value="{{ pwd.password }}">
+                                <span class="input-group-text bg-white border-start-0"><i class="fa fa-eye toggle-password text-muted" style="cursor: pointer"></i></span>
+                            </div>
+                            <div class="small">
+                                <a href="javascript:;" class="small generate-password">Generate password</a>
+                            </div>
+                        </div>
+                        <div class="mb-3 col-12 col-lg-6">
+                            <label for="change-password2" class="form-label"><b>Confirm Password</b></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                <input id="password2" type="password" name="pwd[password2]" class="form-control border-end-0{% if errors.password2 %} is-invalid{% endif %}" value="{{ pwd.password2 }}">
+                                <span class="input-group-text bg-white border-start-0"><i class="fa fa-eye toggle-password text-muted" style="cursor: pointer"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" name="changePwd" class="btn btn-warning" value="1">
+                                <i class="fa-solid fa-check me-1"></i>
+                                Change password
+                            </button>
+                        </div>
+
+                    </div>
+                {% endif %}
+
+                {% if id %}
+                    <div class="alert border-danger mt-4">
+                        <h4 class="text-danger">Danger zone</h4>
+
+                        Click on the button to permanently delete the selected API client.
+
+                        <div class="mt-3">
+                            <button id="btn-delete" type="button" name="delete" class="btn btn-danger" value="1">
+                                <i class="fa-solid fa-trash me-1"></i>
+                                Delete API client
+                            </button>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="mt-4">
+                    <a href="?page=api" class="">Back</a>
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+    {% endif %}
+</div>

@@ -1,0 +1,7 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="{{ element.getGroupClasses }}">
+    <a href="{{ element.getPreviewUrl }}" data-bs-target="#preview-modal" data-bs-toggle="modal" data-size="xl" class="{{ element.getClass }}"{{ self.attributes(element.getAttributes) }}>
+        <i class="fa fa-eye"></i>
+        {{ _(element.getFileName) }}
+    </a>
+</div>

@@ -1,0 +1,4 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}" class="{{ element.getGroupClasses }}">
+    {{ include(template_from_string( element.getHtml )) }}
+</div>

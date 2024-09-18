@@ -1,0 +1,27 @@
+<body class="" data-layout='{"sidebar": {"color":"{% if settings.darkSideBar %}dark{% else %}light{% endif %}"}}'>
+<div id="wrapper">
+    {% include 'navbar.twig' %}
+    {% include 'sidebar.twig' %}
+    <div class="content-page">
+        <div class="content">
+            <div class="container-fluid">
+                {% if page.getTitle and page.getTemplate != 'index' %}
+                    <h1 class="{% if page.getSubTitle  %}mb-0{% else %}mb-3{% endif %} text-primary">
+                        {% if page.getIcon %}
+                            <i class="fa-light {{ page.getIcon }} me-1"></i>
+                        {% endif %}
+                        {{ _(page.getTitle)|raw }}
+                    </h1>
+                {% endif %}
+                {% if page.getSubTitle and page != 'index' %}
+                    <h4 class="mb-3 text-secondary">{{ _(page.getSubTitle)|raw }}</h4>
+                {% endif %}
+
+                {% include pageTemplate ~ '.twig' %}
+            </div>
+        </div>
+        {% include 'footer.twig' %}
+    </div>
+</div>
+{% include 'rightbar.twig' %}
+{% include 'page-modals.twig' %}

@@ -1,0 +1,21 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="upload-container">
+    <div class="input-group">
+        <div class="form-control position-relative p-0" style="height: 38px;">
+            <div class="file-input p-1">
+                {% if element.getDefaultFile %}
+                    {{ element.getDefaultFile }}
+                {% else %}
+                    {{ _('LBL_NO_FILE_SELECTED') }}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="btn btn-primary btn-file" tabindex="500">
+            <i class="fa-solid fa-folder-open"></i>
+            <span class="hidden-xs">{{ _(element.getLabel) }}</span>
+            <input id="{{ element.getId }}" name="{{ element.getName }}" type="file" value="" class="{{ element.getClass }}" {% if element.isDisabled %} disabled{% endif %}{% if element.isReadonly %} readonly{% endif %}{{ self.attributes(element.getAttributes) }} accept="{{ element.getAllowedExtensions }}">
+            <input id="{{ element.getId }}-hidden" name="{{ formName }}[{{ element.getName }}]" type="hidden" value="{{ element.getDefaultFile }}">
+        </div>
+    </div>
+</div>

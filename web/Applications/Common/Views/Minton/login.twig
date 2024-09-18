@@ -1,0 +1,77 @@
+<div class="tab-content">
+    <div class="tab-pane{% if login %} active show{% endif %}" id="tab-login">
+        <h4 class="mt-0">{{ _('LBL_SIGN_IN') }}</h4>
+        <p class="text-muted mb-4">{{ _('LBL_SIGN_IN_INFO_TEXT') }}</p>
+
+        {% if forms.LoginForm.getErrors|length > 0 %}
+            <div class="alert alert-danger bg-danger text-white border-0">
+                {% for error in forms.LoginForm.getErrors %}
+                    <div>{{ _(error.message) }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form action="/login/" method="post" autocomplete="off">
+            <div class="mb-2{% if forms.LoginForm.getErrors %} has-error{% endif %}">
+                <label for="emailaddress" class="form-label">{{ _('LBL_EMAIL') }}</label>
+                <input class="form-control" name="LoginForm[email]" type="email" id="emailaddress" value="{{ forms.LoginForm.get('email') }}" required="" placeholder="{{ _('LBL_EMAIL') }}">
+            </div>
+            <div class="mb-2{% if forms.LoginForm.getErrors %} has-error{% endif %}">
+                <label for="password" class="form-label">{{ _('LBL_PASSWORD') }}</label>
+                <input type="password" id="password" class="form-control" name="LoginForm[password]" value="{{ forms.LoginForm.get('password') }}" placeholder="{{ _('LBL_PASSWORD') }}">
+            </div>
+            <div class="nav nav-tabs border-0 text-end">
+                <a href="/" data-bs-toggle="tab" class="small" tabindex="-1" data-bs-target="#tab-forgot">
+                    {{ _('LBL_FORGOT_PASSWORD') }}
+                </a>
+            </div>
+
+            <div class="d-grid text-center mt-3">
+                <button class="btn btn-primary waves-effect waves-light" type="submit" name="LoginForm[signIn]">{{ _('BTN_SIGN_IN') }}</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="tab-pane{% if forgotPassword %} active show{% endif %}" id="tab-forgot">
+        <h4 class="mt-0">{{ _('LBL_RECOVER_PASSWORD') }}</h4>
+        <div class="text-muted mb-4">{{ _('LBL_RECOVER_PASSWORD_INFO') }}</div>
+
+        {% if forms.ForgotPasswordForm.getErrors|length > 0 %}
+            <div class="alert alert-danger bg-danger text-white border-0">
+                {% for error in forms.ForgotPasswordForm.getErrors %}
+                    <div>{{ _(error.message) }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if not success %}
+            <form action="/login/" id="forgotPassword" method="post" autocomplete="off">
+                <div class="mb-2{% if forms.ForgotPasswordForm.getErrors %} has-error{% endif %}">
+                    <label for="id-recover-email" class="form-label">{{ _('LBL_EMAIL') }}</label>
+                    <input class="form-control" name="ForgotPasswordForm[email]" type="email" id="id-recover-email" value="{{ forms.ForgotPasswordForm.get('email') }}" required="" placeholder="{{ _('LBL_EMAIL') }}">
+                </div>
+
+                <div class="d-grid text-center mt-3">
+                    <button type="submit" name="ForgotPasswordForm[sendPwd]" class="btn btn-primary btn-block waves-effect waves-light">
+                        {{ _('BTN_CONTINUE') }}
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <div class="alert alert-success bg-success text-white border-0">
+                <i class="fa-light fa-check me-1"></i>
+                {{ _('LBL_RECOVER_PASSWORD_SENT') }}
+            </div>
+        {% endif %}
+
+        <div class="nav nav-tabs text-end border-0 mt-2">
+            <a href="/" data-bs-toggle="tab" class="small" data-bs-target="#tab-login">
+                {{ _('LBL_BACK_TO_LOGIN') }}
+            </a>
+        </div>
+    </div>
+</div>
+<footer class="footer footer-alt mt-4">
+    {% include 'copyright.twig' %}
+</footer>

@@ -1,0 +1,6 @@
+{% import "formBuilderMacros.twig" as formBuilder %}
+<div class="table-{{ table.getName }}-buttons">
+{% for button in table.getButtons %}
+    {{ formBuilder.button(button) }}
+{% endfor %}
+</div>

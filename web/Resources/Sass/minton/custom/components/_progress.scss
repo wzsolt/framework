@@ -1,0 +1,128 @@
+// 
+// progress.scss
+//
+
+// Custom height
+
+// Progress height small
+.progress-sm {
+    height: 5px;
+}
+
+
+// Progress height medium
+.progress-md {
+    height: 8px;
+}
+
+
+// Progress height large
+.progress-lg {
+    height: 12px;
+}
+
+// Progress height extra large
+.progress-xl {
+    height: 15px;
+}
+
+
+/* Progressbar Vertical */
+.progress-vertical {
+    min-height: 250px;
+    height: 250px;
+    width: 10px;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 0;
+    margin-right: 20px;
+
+    .progress-bar {
+        width: 100%;
+    }
+
+    &.progress-xl {
+        width: 15px;
+    }
+
+    &.progress-lg {
+        width: 12px;
+    }
+
+    &.progress-md {
+        width: 8px;
+    }
+
+    &.progress-sm {
+        width: 5px;
+    }
+}
+
+.progress-vertical-bottom {
+    min-height: 250px;
+    height: 250px;
+    position: relative;
+    width: 10px;
+    display: inline-block;
+    margin-bottom: 0;
+    margin-right: 20px;
+
+    .progress-bar {
+        width: 100%;
+        bottom: 0;
+        position: absolute;
+    }
+
+    &.progress-xl {
+        width: 15px;
+    }
+
+    &.progress-lg {
+        width: 12px;
+    }
+
+    &.progress-md {
+        width: 8px;
+    }
+
+    &.progress-sm {
+        width: 5px;
+    }
+}
+
+.progressbar-marker {
+    position: absolute;
+    z-index: 5;
+    top: 0;
+    height: 12px;
+    border-right: 1px solid $warning;
+}
+
+.progressbar-marker:after {
+    content: ' ';
+    position: absolute;
+    left: -5px;
+    top: -5px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 5.5px 0 5.5px;
+    border-color: $warning transparent transparent transparent;
+}
+
+.progress-bar.animate {
+    border-radius: 0;
+    animation: grow 1.5s 1 ease-in-out 0.5s;
+    animation-delay: 0.5s;
+    transform-origin: 0 100%;
+    animation-fill-mode: both;
+}
+
+@keyframes grow {
+    from {
+        transform: scale(0.0,1.0)
+    }
+    to {
+        transform: scale(1.0,1.0)
+    }
+}

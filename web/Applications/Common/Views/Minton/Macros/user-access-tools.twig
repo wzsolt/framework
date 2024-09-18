@@ -1,0 +1,71 @@
+{% macro accessControl(menuItem, app, group, roles, accessRights, controlElement, level) %}
+    {% import "formBuilderMacros.twig" as self %}
+    <tr class="d-flex">
+        <td class="col-{{ 12 - (roles|length * 2) }} ps-{{ level }}"{% if menuItem.getDisplayType == 2 %} colspan="{{ roles|length + 1 }}"{% endif %}>
+            {% if menuItem.getDisplayType == 2 %}<b class="text-primary">{% endif %}
+
+            {% if menuItem.getIcon %}
+                <i class="{{ menuItem.getIcon }} me-1"></i>
+            {% endif %}
+
+            {{ _(menuItem.getLabel) }}
+
+            {% if menuItem.getDisplayType == 2 %} <i class="fa fa-caret-down"></i></b>{% endif %}
+
+            {% if not menuItem.getDisplayType != 2 and menuItem.getKey != 'index' and accessRights.currentLevel == 3 %}
+                <div class="float-end">
+                    <a href="/ajax/forms/AddFunctionForm/?id=0&fkeys={{ menuItem.getKey }},{{ app }},{{ group }}" data-bs-toggle="modal" data-bs-target="#ajax-modal" class="add-function">
+                        <i class="fa fa-plus"></i>
+                    </a>
+                </div>
+            {% endif %}
+        </td>
+
+        {% if menuItem.getDisplayType != 2 %}
+            {% for roleKey, role in roles %}
+                <td class="text-center col-2 alert-{{ role.color }}" data-app="{{ app }}" data-group="{{ group }}" data-page="{{ menuItem.getKey }}" data-role="{{ roleKey }}">
+                    {% do controlElement.setId('access-' ~ menuItem.getKey ~ '-' ~ group ~ '-' ~ roleKey) %}
+
+                    {% set value = accessRights[roleKey][menuItem.getKey] %}
+                    {% if not value  %}
+                        {% set value = 0 %}
+                    {% endif %}
+
+                    {{ self.renderElement(controlElement, value) }}
+                </td>
+            {% endfor %}
+        {% endif %}
+    </tr>
+{% endmacro %}
+
+
+{% macro functionControl(page, app, group, roles, functions, functionRights, controlElement, level) %}
+    {% import "formBuilderMacros.twig" as self %}
+
+    {% if functions[page] is not empty %}
+        {% for fn in functions[page] %}
+            <tr class="d-flex">
+                <td class="col-{{ 12 - (roles|length * 2) }} function-rights text-primary small ps-4">
+                    <span class="ps-{{ level }}">{{ fn.name }}</span>
+                </td>
+                {% for roleKey, role in roles %}
+                    <td class="col-2 alert-{{ role.color }} function-rights text-primary text-center" data-app="{{ app }}" data-group="{{ group }}" data-page="{{ page }}" data-role="{{ roleKey }}" data-function="{{ fn.key }}">
+                        {% if functionRights.currentLevel == 3 %}
+
+                            {% do controlElement.setId('function-' ~ page ~ '-' ~ group ~ '-' ~ roleKey ~ '-' ~ fn.key) %}
+
+                            {{ self.renderElement(controlElement, functionRights[roleKey][fn.key]) }}
+
+                        {% elseif functionRights.currentLevel == 1 %}
+                            {% if functionRights[roleKey][fn.key] %}
+                                <i class="fa fa-check fa-fw text-success"></i>
+                            {% else %}
+                                <i class="fa fa-times text-danger fa-fw"></i>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    {% endif %}
+{% endmacro %}

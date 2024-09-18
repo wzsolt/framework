@@ -1,0 +1,13 @@
+<div class="d-flex table-{{ table.getName }}-counter">
+    <span class="small text-muted">
+    {% if table.getPager.recordCount > table.getPager.filteredCount %}
+        {{ _('LBL_TABLE_FILTERED', '<b>' ~ table.getPager.recordCount ~ '</b>', '<b>' ~ table.getPager.filteredCount ~ '</b>')|raw }}
+    {% else %}
+        {% if table.getPager.recordCount > 1 %}
+            {{ _('LBL_TABLE_COUNT_PLURAL', '<b>' ~ table.getPager.recordCount ~ '</b>')|raw }}
+        {% else %}
+            {{ _('LBL_TABLE_COUNT', '<b>' ~ table.getPager.recordCount ~ '</b>')|raw }}
+        {% endif %}
+    {% endif %}
+    </span>
+</div>

@@ -1,0 +1,19 @@
+{% if (table.getPagerPosition b-and 1) == 1 %}
+<div class="d-flex py-2 flex-column flex-sm-row">
+    {% include "table-pager.twig" %}
+</div>
+{% endif %}
+
+<div id="table-{{ table.getName }}" class="{{ table.getTableClass }}" data-table="{{ table.getName }}" {% if table.className != table.getName %} data-alias="{{ table.getClassName }}"{% endif %}{% if table.parameters.options %} data-options="{{ table.parameters.options|json_encode() }}"{% endif %}{% if table.parameters.foreignkeys %} data-foreignkey="{{ table.getForeignKeys|join('|') }}"{% endif %}>
+    {% include table.getBodyTemplate ~ '.twig' %}
+</div>
+
+<div class="d-flex py-2 flex-column flex-sm-row">
+    {% if not table.isCounterHidden %}
+        {% include "table-row-counter.twig" %}
+    {% endif %}
+
+    {% if (table.getPagerPosition b-and 2) == 2 %}
+        {% include "table-pager.twig" %}
+    {% endif %}
+</div>

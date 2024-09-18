@@ -1,0 +1,150 @@
+{% import "formBuilderMacros.twig" as formBuilder %}
+
+{% if form.includeBefore %}
+    {% include form.includeBefore ~ '.twig' %}
+{% endif %}
+
+{% if form.sections %}
+    {% if form.sections.type == 'tab' %}
+        <div class="row gutters-sm">
+            {% if not form.sections.hideSidebar %}
+            <div class="col-lg-3 d-none d-lg-block">
+                <nav class="nav flex-column nav-pills nav-gap-y-1">
+                    {% for section in form.sections.items %}
+                    <a {% if section.link %}href="{{ section.link }}"{% else %}href="#{{ section.id }}" data-bs-toggle="tab"{% endif %} class="nav-item mb-1 nav-link has-icon nav-link-faded{% if section.link %} mt-3{% endif %}{% if section.active %} active{% endif %} {{ section.class }}"{{ formBuilder.attributes(section.attributes) }}>
+                        {% if section.icon %}
+                            <i class="{{section.icon }} fa-fw me-1"></i>
+                        {% elseif section.featherIcon %}
+                            <i data-feather="{{ section.featherIcon }}" class="me-1"></i>
+                        {% endif %}
+                        {{ _(section.title) }}
+                    </a>
+                    {% endfor %}
+                </nav>
+            </div>
+            {% endif %}
+            <div class="{% if not form.sections.hideSidebar %}col-lg-9{% else %}{{ form.formWidth }}{% endif %}">
+                <div class="card">
+                    <div class="card-header border-bottom d-flex{% if not form.sections.hideSidebar %} d-lg-none{% endif %}">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            {% for section in form.sections.items %}
+                                <li class="nav-item">
+                                    <a {% if section.link %}href="{{ section.link }}"{% else %}href="#{{ section.id }}" data-bs-toggle="tab"{% endif %} class="nav-link has-icon{% if section.active %} active{% endif %} {{ section.class }}"{{ formBuilder.attributes(section.attributes) }}>
+                                        {% if section.icon %}
+                                            <i class="{{section.icon }} fa-fw"></i>
+                                        {% elseif section.featherIcon %}
+                                            <i data-feather="{{ section.featherIcon }}" class="me-1"></i>
+                                        {% endif %}
+                                        <span class="d-none d-sm-inline">{{ _(section.title) }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="tab-content pt-0">
+                        {% for section in form.sections.items %}
+                            <div class="tab-pane{% if section.active %} active{% endif %} {{ section.tabPaneClass }}" id="{{ section.id }}"{{ formBuilder.attributes(section.attributes) }}>
+                                {{ formBuilder.renderElements(form.controls[section.id], form.values, form.name, form.errors) }}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+
+                    {% if form.buttons|length > 0 %}
+                        <div class="d-flex card-footer- p-2 border-top{% if form.cssClass.footer %} {{ form.cssClass.footer }}{% endif %}">
+                            <div class="justify-content-end ms-auto">
+                                {% for button in form.buttons %}
+                                    {% if button.showInEditor and not button.isHidden  %}
+                                    {{ formBuilder.button(button) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        {% for section in form.sections.items %}
+            <div class="row gutters-sm mb-4">
+                {% if not form.sections.hideSidebar %}
+                <div class="col-md-4 d-none d-md-block">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-primary">
+                                {% if section.icon %}
+                                    <i class="{{section.icon  }} fa-fw me-1"></i>
+                                {% elseif section.featherIcon %}
+                                    <i data-feather="{{ section.featherIcon }}" class="me-1"></i>
+                                {% endif %}
+                                {{ _(section.title) }}
+                            </h4>
+                            {% if section.text %}
+                                {{ _(section.text) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="{% if not form.sections.hideSidebar %}col-md-8{% else %}{% if section.class %}{{ section.class }}{% else %}{{ form.formWidth }}{% endif %}{% endif %}">
+                    <div class="card">
+                        {% if form.sections.hideSidebar and section.title %}
+                            <div class="card-header">
+                                <h4 class="text-primary">
+                                    {% if section.icon %}
+                                        <i class="{{section.icon  }} fa-fw me-1"></i>
+                                    {% elseif section.featherIcon %}
+                                        <i data-feather="{{ section.featherIcon }}" class="me-1"></i>
+                                    {% endif %}
+                                    {{ _(section.title) }}
+                                </h4>
+                                {% if section.text %}
+                                    {{ _(section.text) }}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            {{ formBuilder.renderElements(form.controls[section.id], form.values, form.name, form.errors) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% if form.buttons|length > 0 %}
+            <div class="row">
+                <div class="d-flex pt-2 mb-3 {{ form.formWidth}} {% if form.cssClass.footer %} {{ form.cssClass.footer }}{% endif %}">
+                    <div class="justify-content-end ms-auto">
+                        {% for button in form.buttons %}
+                            {% if button.showInEditor and not button.isHidden  %}
+                            {{ formBuilder.button(button) }}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+{% else %}
+    <div class="{% if form.boxed %}card bcard{% endif %}{% if form.cssClass.card %} {{ form.cssClass.card }}{% endif %}">
+        {% if form.boxed %}
+            <div class="card-body{% if form.cssClass.body %} {{ form.cssClass.body }}{% endif %}">
+                {{ formBuilder.renderElements(form.controls, form.values, form.name, form.errors) }}
+            </div>
+        {% else %}
+            {{ formBuilder.renderElements(form.controls, form.values, form.name, form.errors) }}
+        {% endif %}
+
+        {% if form.buttons|length > 0 %}
+            <div class="d-flex {% if form.boxed %}card-footer p-3 bg-gray-100 border-top{% else %}mt-4{% endif %}{% if form.cssClass.footer %} {{ form.cssClass.footer }}{% endif %}">
+                <div class="justify-content-end ms-auto">
+                    {% for button in form.buttons %}
+                        {% if button.showInEditor and not button.isHidden %}
+                        {{ formBuilder.button(button) }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endif %}

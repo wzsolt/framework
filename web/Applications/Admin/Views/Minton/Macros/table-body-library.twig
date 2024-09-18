@@ -1,0 +1,33 @@
+{% import "tools" ~ constant('TWIG_FILE_EXTENSION') as tools %}
+<tbody>
+{% for i, row in table.rows %}
+    {% set keyvalue = row.__id %}
+    <tr>
+        <td class="col-6">
+            {{ fileTypeIcon(row.cl_mime_type)|raw }}
+            {{ row.cl_filename }}
+
+            <span class="small">
+            {% if row.cl_type == 'video' %}
+                ({{ _time(row.cl_video_duration) }})
+            {% else %}
+                ({{ formatBytes(row.cl_filesize) }})
+            {% endif %}
+            </span>
+        </td>
+        <td class="col-2 text-center">
+            {{ row.cl_type }}
+        </td>
+        <td class="col-2 text-center">
+            {{ _date(row.cl_timestamp) }}
+        </td>
+        <td class="col-2 text-end">
+            {% if table.contentFilter == 'mixed' %}
+                <a href="javascript:;" class="text-primary cbt-select-video-file" data-video-id="{{ row.__id }}" data-element-type="lecture">{{ _('LBL_SELECT_FILE') }}</a>
+            {% else %}
+                <input type="checkbox" class="form-check-input" name="resourceIds[{{ row.__id }}]" value="{{ row.__id }}" scope="cbt-form">
+            {% endif %}
+        </td>
+    </tr>
+{% endfor %}
+</tbody>

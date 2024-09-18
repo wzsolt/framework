@@ -1,0 +1,16 @@
+{% import "formBuilderMacros.twig" as self %}
+{% import "tools.twig" as tools %}
+<div id="{{ element.getId }}-formgroup" class="{{ element.getGroupClasses }}">
+    {% if element.getDocId %}
+        {% if element.getLabel %}
+            {{ self.icon(element) }}
+            {{ _(element.getLabel) }}
+            {{ tools.fileDownload(element.getDocId, element.getDocGroupId, element.getFileHash, element.hasPreview, element.getDocumentType) }}
+        {% endif %}
+    {% else %}
+        <a href="{{ element.getUrl }}" class="{{ element.getClass }}"{{ self.attributes(element.getAttributes) }}>
+            {{ self.icon(element) }}
+            {{ _(element.getLabel) }}
+        </a>
+    {% endif %}
+</div>

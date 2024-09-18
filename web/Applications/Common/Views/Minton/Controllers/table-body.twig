@@ -1,0 +1,87 @@
+{% import 'table-helper.twig' as Helper %}
+<tbody class="mt-1 table-content {% if table.isSortable %} table-sort{% endif %}">
+{% set firstTbody = true %}
+{% set bodyOpen = true %}
+{% set groupIds = [] %}
+{% for i, row in table.getRows %}
+    {% set rowID = row.__id %}
+    {% set foreignKeyValues = '' %}
+    {% for field, val in table.getForeignKeyFields %}
+        {% if row[field]  %}
+            {% set foreignKeyValues = foreignKeyValues ~ row[field] %}
+        {% else %}
+            {% set foreignKeyValues = foreignKeyValues ~ '0' %}
+        {% endif %}
+        {% if not loop.last  %}
+            {% set foreignKeyValues = foreignKeyValues ~ ',' %}
+        {% endif %}
+    {% endfor %}
+
+    {% set selected = false %}
+    {% if table.isMultipleSelect %}
+        {% if rowID in table.getSelectedIds %}
+            {% set selected = true %}
+        {% endif %}
+    {% endif %}
+
+    {% if row.groups %}
+        {% for groupKey, group in row.groups %}
+            {% if groupIds['g-' ~ loop.index] != groupKey %}
+                {% set groupIds = groupIds|merge({ ('g-' ~ loop.index): groupKey }) %}
+
+                {% if bodyOpen and not firstTbody %}
+                    </tbody>
+                {% endif %}
+                {% set bodyOpen = true %}
+
+                {% if not firstTbody %}
+                    <tbody class="mt-1{% if table.isSortable %} table-sort{% endif %}">
+                {% endif %}
+                <tr class="group-level-{{ loop.index }} bg-gray-200 no-hover no-sort" data-groupid="{{ groupKey }}">
+                    <th colspan="{{ row|length }}"><b class="{{ group.class }}">{{ _(group.text) }}</b>{% if group.description %}<span class="fw-light text-muted"> - {{ group.description }}</span>{% endif %}</th>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% set formName = table.getFormName %}
+    {% set modalSize = table.getModalSize %}
+
+    {% if table.allowView %}
+        {% set formName = table.getViewForm %}
+    {% endif %}
+
+    <tr {% if table.isSortable %} id="{{ row.__id }}" data-table="{{ table.getName}}" data-foreignKeyValues="{{ foreignKeyValues }}" data-groupid="{{ row.__groupId }}"{% endif %} class="{% if row.options.isDeleted %} bg-deleted{% else %} bg-h-yellow{% endif %}{% if table.isRowClick and ((table.isEdit or table.isView) and row.options.edit) %} tr-clickable{% endif %}{% if row.options.class %} {{ row.options.class }}{% endif %}{% if selected %} tr-selected{% endif %}" data-id="{{ rowID }}" {% if (table.isEdit or table.isView) and row.options.edit %}{% if table.getCustomUrl %}data-url="{{ table.getCustomUrl|replace({'%fkeys%': foreignKeyValues, '%id%': rowID }) }}"{% else %}{% if table.isRowClick %}{% if table.isModalForm %} data-modal="true"{% if modalSize %} data-size="{{ modalSize }}"{% endif %} data-href="/ajax/forms/{{ formName }}/?id={{ rowID }}&fkeys={{ foreignKeyValues }}&table={{ table.getName }}{% if table.isReadonly or table.defaultAction == 'view' %}&view=1{% endif %}" {% else %} data-edit="./{{ table.defaultAction }}/?table={{ table.getName }}&id={{ row.__id }}&fkeys={{ foreignKeyValues }}"{% endif %}{% endif %}{% endif %}{% if table.getClickTarget %} data-target="{{ table.getClickTarget }}"{% endif %}{% endif %}>
+    {% if table.isMultipleSelect %}
+        <td class="position-relative table-options d-none d-sm-table-cell">
+            <div class="form-group form-check form-check-warning">
+                <input id="{{ table.getName }}-{{ row.__id }}" type="checkbox" class="form-check-input table-row-selector" name="{{ table.getName }}[]" value="{{ rowID }}"{% if selected %} checked{% endif %} data-parsley-ui-enabled="false">
+                <label for="{{ table.getName }}-{{ row.__id }}" class="form-check-label"></label>
+            </div>
+        </td>
+        {% endif %}
+    {% for column in table.getColumns %}
+        {% if column.getType != 'hidden' %}
+            <td class="{% if column.getWidth %}col-{{ column.getWidth }}{% else %}col{% endif %}{% if column.getCellClass %} {{ column.getCellClass }}{% endif %}"{% if column.getStyle %} style="{{ include(template_from_string( column.getStyle )) }}" {% endif %}>
+                {{ Helper.tableCell(table.getName, foreignKeyValues, column, row, (table.isReadonly or row.options.readonly))|raw }}
+            </td>
+        {% endif %}
+    {% endfor %}
+    {% if table.isRowOptions %}
+        <td class="col-{{ table.getOptionsWidth }} text-end text-nowrap table-options">
+            {{ Helper.tableOptions(row, foreignKeyValues, table)|trim|raw }}
+        </td>
+    {% endif %}
+    </tr>
+    {% if row.subTable %}
+        <tr>
+            <td colspan="{{ row|length }}">
+                {{ Helper.createTable(row.subTable) }}
+            </td>
+        </tr>
+    {% endif %}
+    {% set firstTbody = false %}
+{% endfor %}
+{% if bodyOpen %}
+</tbody>
+{% endif %}

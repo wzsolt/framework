@@ -1,0 +1,38 @@
+{% import "formBuilderMacros.twig" as formBuilder %}
+
+{% if title %}
+<div class="modal-header d-block">
+    <h3 class="modal-title d-block text-primary" id="customModalLabel">{{ _(title)|raw }}</h3>
+    {% if subTitle %}
+        <h4 class="text-info d-block m-0">{{ _(subTitle) }}</h4>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="modal-body{% if scroll %} overflow-auto{% endif %}"{% if height %} style="max-height: {{ height }}px;" {% endif %}>
+    {% if contentString is not empty %}
+        {{ include(template_from_string( contentString )) }}
+    {% elseif content is not empty %}
+        {% include content ~ '.twig' %}
+    {% endif %}
+</div>
+
+{% if not noFooter %}
+<div class="card-progress d-none">
+    <div class="card-progressbar bg-primary"></div>
+</div>
+<div class="modal-footer d-block text-end" data-loading="{{ _('LBL_LOADING_PLEASE_WAIT') }}">
+    {% if buttons and not isReadonly %}
+        {% for btn in buttons %}
+            {% if btn.include %}
+                {% include btn.include ~ constant('TWIG_FILE_EXTENSION') %}
+            {% else %}
+                {{ formBuilder.button(btn) }}
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <button type="button" class="btn btn-light waves-effect waves-light" data-bs-dismiss="modal">{{ _('BTN_CLOSE') }}</button>
+    {% endif %}
+</div>
+{% endif %}
+<script>app.reInit();</script>

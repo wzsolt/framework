@@ -1,0 +1,127 @@
+{% macro createTable(table) %}
+    {% import _self as Helper %}
+
+    {% if table.isFormLoaded %}
+        {{ Helper.form(table.getForm) }}
+    {% else %}
+        {% if table.getType == 'table' %}
+            {% include 'table.twig' %}
+        {% elseif table.getType == 'div' %}
+            {% include 'table-div.twig' %}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro tableCell(tableName, foreignKeyValues, column, row, readonly = false) %}
+    {% import 'formBuilderMacros.twig' as form %}
+
+    {% set val = row[column.getField] %}
+    {% set id = row.__id %}
+
+    {% if column.getTemplate is not empty %}
+
+        {{ include(template_from_string( column.getTemplate )) }}
+
+    {% elseif column.getType == 'options' %}
+        {% if column.getOptions[val] is iterable %}
+            {% if column.getOptions[val].class is not empty %}<div class="btn btn-block btn-sm {{ column.getOptions[val].class }}">{% endif %}
+            {{ _(column.getOptions[val].name) }}
+            {% if column.getOptions[val].class is not empty %}</div>{% endif %}
+        {% elseif column.getOptions[val] is not empty %}
+            {{ _(column.getOptions[val]) }}
+        {% else %}
+            {%  for opt in column.getOptions %}
+                {% if opt is iterable and opt[val] is not empty %}
+                    {{ _(opt[val]) }}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+    {% elseif column.getType == 'multipleoptions' %}
+        {% set item = false %}
+        {% apply spaceless %}
+        {% for key, name in column.options %}{% if (val b-and key) == key %}{% if item %}, {% endif %}{{ name }}{% set item = true %}{% endif %}{% endfor %}
+        {% endapply %}
+    {% elseif column.getType in ['switch', 'checkbox', 'radio'] %}
+        {% if readonly %}
+            {% if val %}
+                <i class="fas fa-check text-success"></i>
+            {% else %}
+                <i class="fas fa-times text-danger"></i>
+            {% endif %}
+        {% else %}
+            {{ form.renderElement(column.getControl(id, foreignKeyValues), val) }}
+        {% endif %}
+
+    {% elseif column.getType == 'yesno' %}
+        {% if val %}
+            <i class="{% if column.getIcons[ val ].icon %}{{ column.getIcons[ val ].icon }}{% else %}fa-solid fa-check{% endif %} {% if column.getIcons[ val ].color %}{{ column.getIcons[ val ].color }}{% else %}text-success{% endif %}"></i>
+        {% else %}
+            <i class="{% if column.getIcons[ val ].icon %}{{column.getIcons[ val ].icon }}{% else %}fa-solid fa-times{% endif %} {% if column.getIcons[ val ].color %}{{ column.getIcons[ val ].color }}{% else %}text-danger{% endif %}"></i>
+        {% endif %}
+
+    {% elseif column.getType == 'icon' %}
+        <i class="{{ column.getIcons[ val ].icon }}{% if column.getIcons[ val ].color %} text-{{ column.getIcons[val].color }}{% endif %}"{% if column.getIcons[ val ].title %} title="{{ _(column.getIcons[ val ].title) }}" data-bs-toggle="tooltip" {% endif %}></i>
+
+    {% else %}
+        {{ val|raw }}
+    {% endif %}
+{% endmacro %}
+
+{% macro tableOptions(row, foreignKeyValues, table) %}
+    {% if table.getOptionsAdditionalTemplate is not empty %}
+        {% include table.getOptionsAdditionalTemplate ~ '.twig' %}
+    {% endif %}
+
+    {% if table.getOptionsTemplate is not empty %}
+        {% include table.getOptionsTemplate ~ '.twig' %}
+    {% else %}
+        {% if table.isModalForm %}
+            {% if table.isReadonly %}
+                {% if table.isView %}<a data-bs-toggle="modal" data-bs-target="#{{ table.getModalId }}"{% if table.getModalSize %} data-size="{{ table.getModalSize }}"{% endif %} href="/ajax/forms/{% if table.isView %}{{ table.getViewFormName }}{% else %}{{ table.getFormName }}{% endif %}/?id={{ row.__id }}&fkeys={{ foreignKeyValues }}&table={{ table.getName }}&view=1" class="btn btn-xs btn-outline-info waves-effect waves-light me-1" data-bs-backdrop="static" data-bs-keyboard="false"><i class="far fa-eye text-muted" title="{{ _('BTN_VIEW') }}" data-bs-toggle="tooltip"></i></a>{% endif %}
+            {% else %}
+                {% if table.isView %}<a data-bs-toggle="modal" data-bs-target="#{{ table.getModalId }}"{% if table.getModalSize %} data-size="{{ table.getModalSize }}"{% endif %} href="/ajax/forms/{% if table.isView %}{{ table.getViewFormName }}{% else %}{{ table.getFormName }}{% endif %}/?id={{ row.__id }}&fkeys={{ foreignKeyValues }}&table={{ table.getName }}&view=1" class="btn btn-xs btn-outline-info waves-effect waves-light me-1"><i class="far fa-eye" title="{{ _('BTN_VIEW') }}" data-bs-toggle="tooltip"></i></a>{% endif %}
+                {% if table.isEdit and ((row.options.edit is defined and row.options.edit != false) or row.options.edit is not defined) %}<a data-bs-toggle="modal" data-bs-target="{{ table.getModalId }}"{% if table.modalSize %} data-size="{{ table.modalSize }}"{% endif %} href="/ajax/forms/{{ table.getFormName }}/?id={{ row.__id }}&fkeys={{ foreignKeyValues }}&table={{ table.getName }}" class="btn btn-xs btn-outline-primary waves-effect waves-light me-1" data-bs-backdrop="static" data-bs-keyboard="false"><i class="far fa-edit" title="{{ _('BTN_EDIT') }}" data-bs-toggle="tooltip"></i></a>{% endif %}
+            {% endif %}
+        {% else %}
+            {% if table.isReadonly %}
+                {% if table.isView %}<a href="{% if table.getCustomUrl %}{{ table.getCustomUrl|replace({'%foreignKeyValues%': foreignKeyValues, '%id%': row.__id }) }}{% else %}./view/?id={{ row.__id }}&fkeys={{ foreignKeyValues }}&table={{ table.getName }}{% endif %}" class="btn btn-xs btn-outline-info waves-effect waves-light me-1"><i class="far fa-eye" title="{{ _('BTN_VIEW') }}" data-bs-toggle="tooltip"></i></a>{% endif %}
+            {% else %}
+                {% if table.isView %}<a href="./view/?id={{ row.__id }}&fkeys={{ foreignKeyValues }}&table={{ table.getName }}" class="btn btn-xs btn-outline-info waves-effect waves-light me-1"><i class="far fa-eye"></i></a>{% endif %}
+                {% if table.isEdit and ((row.options.edit is defined and row.options.edit != false) or row.options.edit is not defined) %}
+                    {% if table.getCustomUrl %}
+                        {% set url = table.getCustomUrl|replace({'%foreignKeyValues%': foreignKeyValues, '%id%': row.__id }) %}
+                    {% else %}
+                        {% set url = "./edit/?id=" ~ row.__id ~ "&fkeys=" ~ foreignKeyValues ~ "&table=" ~ table.getName %}
+                    {% endif %}
+                    <a href="{{ url }}"{% if table.getCustomUrl %} target="_blank"{% endif %} class="btn btn-xs btn-outline-primary waves-effect waves-light me-1"><i class="far fa-edit" title="{{ _('BTN_EDIT') }}" data-bs-toggle="tooltip"></i></a>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        {% if not table.isReadonly %}
+            {% if table.isCopy %}<a data-confirm-action="tables.copy('{{ table.getName }}', '{{ row.__id }}', '{{ foreignKeyValues }}')" href="#" data-bs-toggle="modal" data-bs-target="#confirm-delete" data-confirm-button="{{ _('BTN_COPY') }}" data-confirm-question="{{ _('CONFIRM_COPY_TABLE_RECORD')|e }}" data-title="{{ _('LBL_COPY_TABLE_RECORD_TITLE')|e }}" data-color="warning" class="btn btn-outline-warning btn-xs waves-effect waves-light me-1"><i class="far fa-clone" title="{{ _('BTN_COPY') }}" data-bs-toggle="tooltip"></i></a>{% endif %}
+
+            {% if table.isDelete and row.options.delete %}
+                {% if table.isArchive %}
+                    {% if row.options.isDeleted %}
+                        {% if table.isUnDelete %}
+                            <a data-confirm-action="tables.unDelete('{{ table.getName }}', '{{ row.__id }}', '{{ foreignKeyValues }}')" href="#" data-bs-toggle="modal" data-bs-target="#confirm-delete" data-confirm-button="{{ _('BTN_UNARCHIVE') }}" data-confirm-question="{{ _('CONFIRM_UNARCHIVE_TABLE_RECORD')|e }}" class="btn btn-outline-danger btn-xs waves-effect waves-light me-1"><i class="fa fa-undo" title="{{ _('BTN_RESTORE') }}" data-bs-toggle="tooltip"></i> </a>
+                        {% endif %}
+                    {% else %}
+                        <a data-confirm-action="tables.delete('{{ table.getName }}', '{{ row.__id }}', '{{ foreignKeyValues }}')" href="#" data-bs-toggle="modal" data-bs-target="#confirm-delete" data-confirm-button="{{ _('BTN_ARCHIVE') }}" data-confirm-question="{{ _('CONFIRM_ARCHIVE_TABLE_RECORD')|e }}" class="btn btn-outline-danger btn-xs waves-effect waves-light me-1"><i class="fa fa-archive" title="{{ _('BTN_ARCHIVE') }}" data-bs-toggle="tooltip"></i> </a>
+                    {% endif %}
+                {% else %}
+                    <a data-confirm-action="tables.delete('{{ table.getName }}', '{{ row.__id }}', '{{ foreignKeyValues }}')" href="#" data-bs-toggle="modal" data-bs-target="#confirm-delete" data-confirm-question="{{ _('CONFIRM_DELETE_TABLE_RECORD')|e }}" class="btn btn-outline-danger btn-xs waves-effect waves-light me-1"><i class="far fa-trash-alt" title="{{ _('BTN_DELETE') }}" data-bs-toggle="tooltip"></i></a>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+{% endmacro %}
+
+{% macro form(form, context) %}
+    <form action="{{ form.getAction }}" method="post" id="{{ form.getName }}-form" autocomplete="off" class="parsley-form{% if form.submitOnEnter %} frm-submit-enter{% endif %}"{% if form.isUpload %} enctype="multipart/form-data"{% endif %} data-modal="false">
+        {% include "formBuilder.twig" %}
+    </form>
+{% endmacro %}

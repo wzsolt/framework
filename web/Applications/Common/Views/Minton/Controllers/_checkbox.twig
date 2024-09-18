@@ -1,0 +1,5 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="form-group{{ element.getGroupClasses }}{% if element.hasError %} has-error{% endif %}{% if element.getColor %} custom-checkbox-{{ element.getColor }}{% endif %}">
+    <input id="{{ element.getId }}" name="{% if formName %}{{ formName }}[{{ element.getName }}]{% else %}{{ element.getName }}{% endif %}" type="checkbox" value="{{ element.getValueOn }}"{% if element.isDisabled %} disabled="disabled"{% endif %}{% if element.getValueOn == value %} checked="checked"{% endif %} class="form-check-input{{ element.getClass }}"{{ self.attributes(element.getAttributes) }} />
+    <label for="{{ element.getId }}" class="form-check-label">{% if element.getLabel %}{{ self.label(element, false) }}{% endif %}</label>
+</div>

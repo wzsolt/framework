@@ -1,0 +1,50 @@
+<body class="loading auth-fluid-pages pb-0">
+<div class="auth-fluid"{% if settings.logo.loginBg %} style="background-image: url({{ uploads }}login-bg.jpg);"{% endif %}>
+    <div class="auth-fluid-right">
+        {#
+        <div class="auth-user-testimonial">
+            <h3 class="mb-3 text-white">Very elegant & impressive!</h3>
+            <p class="lead fw-normal">
+                <i class="mdi mdi-format-quote-open"></i>
+                I've been using this theme for a while and I must say that whenever I am looking for a design - I refer to this theme for specifics & implementation. With wide arrays of components, designs, charts - I would highly recommend this theme for anyone using it for dashboard or project management usage..
+                <i class="mdi mdi-format-quote-close"></i>
+            </p>
+        </div>
+        #}
+    </div>
+
+    <div class="auth-fluid-form-box">
+        <div class="align-items-center d-flex h-100">
+            <div class="card-body">
+
+                <div class="auth-brand text-center text-lg-start">
+                    <div class="auth-logo">
+                        {% if settings.darkTheme %}
+                            <a href="/" class="logo text-center">
+                                <span class="logo-lg">
+                                    {% if settings.logo.dark %}
+                                        <img src="{{ uploads }}logo-dark.svg" alt="{{ settings.siteName }}" height="50">
+                                    {% else %}
+                                        <span class="logo-lg-text-dark">{{ settings.siteName }}</span>
+                                    {% endif %}
+                                </span>
+                            </a>
+                        {% else %}
+                            <a href="/" class="logo text-center">
+                                <span class="logo-lg">
+                                    {% if settings.logo.light %}
+                                        <img src="{{ uploads }}logo-light.svg" alt="{{ settings.siteName }}" height="50">
+                                    {% else %}
+                                        <span class="logo-lg-text-light">{{ settings.siteName }}</span>
+                                    {% endif %}
+                                </span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% include pageTemplate ~ '.twig' %}
+            </div>
+        </div>
+    </div>
+</div>

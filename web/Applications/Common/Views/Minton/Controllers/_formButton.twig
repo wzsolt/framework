@@ -1,0 +1,8 @@
+{% import "formBuilderMacros.twig" as self %}
+<div id="{{ element.getId }}-formgroup" class="{{ element.getGroupClasses }}{% if element.hasError %} has-error{% endif %}">
+    {% set inputName = formName ~ '[' ~ element.getName ~ ']' %}
+    <button {% if element.getId is not empty %}id="{{ element.getId }}"{% endif %} value="{{ element.getValue }}" class="{{ element.getClass }}" type="{{ element.getButtonType }}" name="{{ inputName }}"{% if element.isDisabled %} disabled="disabled" {% endif %}{{ self.attributes(element.getAttributes) }}>
+        {{ self.icon(element) }}
+        {{ _(element.getLabel) }}
+    </button>
+</div>

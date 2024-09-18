@@ -1,0 +1,17 @@
+{% import "menu-elements" ~ constant('TWIG_FILE_EXTENSION') as element %}
+<footer class="footer">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                {% include 'copyright.twig' %}
+            </div>
+            <div class="col-md-6">
+                <div class="text-md-end footer-links d-none d-sm-block">
+                    {% for menuItem in menuFooter %}
+                        {{ element.footerMenu(menuItem) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

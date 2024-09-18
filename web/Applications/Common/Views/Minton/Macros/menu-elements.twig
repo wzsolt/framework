@@ -1,0 +1,31 @@
+{% macro sidebarMenu(menuItem) %}
+    {% if menuItem.isContainer %}
+        {% set link = '#menu-' ~ menuItem.getKey %}
+    {% else %}
+        {% set link = menuItem.getPath %}
+    {% endif %}
+
+    <a href="{{ link }}" class="{% if menuItem.isSelected %}active show{% endif %}"{% if menuItem.isContainer and menuItem.getDisplayType == 2 %} data-bs-toggle="collapse" aria-expanded="false" aria-controls="menu-{{ menuItem.getKey }}"{% endif %}>
+        <i class="{{ menuItem.getIcon }}"></i>
+        <span>{{ _(menuItem.getLabel) }}</span>
+        {% if menuItem.isContainer and menuItem.getDisplayType == 2 %}
+            <span class="menu-arrow"></span>
+        {% endif %}
+        {% if menuItem.getBadge %}
+            <span id="menu-badge-{{ menuItem.getKey }}" class="float-end badge rounded-pill{% if menuItem.getBadgeColor %} bg-{{ menuItem.getBadgeColor }}{% else %} bg-warning{% endif %}{% if not menuItem.getBadge %} d-none{% endif %}">{{ menuItem.getBadge }}</span>
+        {% endif %}
+    </a>
+{% endmacro %}
+
+{% macro headerMenu(menuItem) %}
+    <a href="{{ menuItem.getPath }}" class="dropdown-item notify-item">
+        <i class="{{ menuItem.getIcon }}"></i>
+        <span>{{ _(menuItem.getLabel) }}</span>
+    </a>
+{% endmacro %}
+
+{% macro footerMenu(menuItem) %}
+    {% if menuItem.getDisplayType == 1 %}
+        <a href="{{ menuItem.getPath }}">{{ _(menuItem.getLabel) }}</a>
+    {% endif %}
+{% endmacro %}
